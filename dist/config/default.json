@@ -1,18 +1,11 @@
 {
     "prod": {
         "connectionString": "mongodb://localhost/myLocaldb",
-        "base_url": "http://localhost:3000",
+        "base_url": "https://multi-webhooks-test.azurewebsites.net",
         "gdrive": {
             "client_id": "554559944330-efliq3qbq8r5pieavok9ocal6u322cu2.apps.googleusercontent.com",
-            "client_secret": "2At7TehLKNeMxtWME1WIEH64"
-        }
-    },
-    "staging": {
-        "connectionString": "mongodb://localhost/myLocaldb",
-        "base_url": "http://localhost:3000",
-        "gdrive": {
-            "client_id": "554559944330-efliq3qbq8r5pieavok9ocal6u322cu2.apps.googleusercontent.com",
-            "client_secret": "2At7TehLKNeMxtWME1WIEH64"
+            "client_secret": "2At7TehLKNeMxtWME1WIEH64",
+            "redirect_url":"http://multi-webhooks-test.azurewebsites.net/code"
         }
     },
     "local": {
