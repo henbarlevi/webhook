@@ -26,7 +26,9 @@ router.get('/gdrive/auth', (req, res) => {
 /*1.Oauth - b.exchange code with access token
     and get user email
   2. Webhook - registering to webhook in order to get user Gdrive activities
+  NOTE - IN google You need to verify domain ownership (in the console.developers.google.com ) to allow webhook
   NOTE - local server cannot register to webhook
+
   */
 router.get('/gdrive/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
     try {

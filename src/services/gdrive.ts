@@ -122,7 +122,7 @@ export class GdriveService {
                 token: user_email,
                 expiration: exp_date,
                 type: "web_hook",
-                address: `${BASE_URL}/webhook/gdrive`
+                address: `${BASE_URL}/webhook/gdrive` //where the notifications should go to
             };
             //https://developers.google.com/drive/v2/reference/changes/watch
             request.post('https://www.googleapis.com/drive/v2/changes/watch', {
