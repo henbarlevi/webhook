@@ -5,7 +5,7 @@
         "gdrive": {
             "client_id": "554559944330-efliq3qbq8r5pieavok9ocal6u322cu2.apps.googleusercontent.com",
             "client_secret": "2At7TehLKNeMxtWME1WIEH64",
-            "redirect_url":"http://multi-webhooks-test.azurewebsites.net/gdrive/code"
+            "redirect_url":"https://multi-webhooks-test.azurewebsites.net/gdrive/code"
         }
     },
     "local": {
