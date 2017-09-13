@@ -24,7 +24,7 @@ class App {
         this.express.use(logger('dev'));
         this.express.use(bodyParser.json());
         this.express.use(bodyParser.urlencoded({ extended: false }));
-        this.express.use(express.static(path.join(__dirname, 'public'))); //handle request for static files - client will get all files from the 'public' folder
+        this.express.use(express.static(path.join(__dirname, './dist/public'))); //handle request for static files - client will get all files from the 'public' folder
     }
     // Configure API endpoints.
     routes() {

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const path = require("path");
 const gdrive_1 = require("../services/gdrive");
 // ===== UTILS =====
 const Logger_1 = require("../utils/Logger");
@@ -50,8 +51,8 @@ router.get('/gdrive/code', (req, res) => __awaiter(this, void 0, void 0, functio
 }));
 /*Domain Verification -IN google in order to use webhook we should verify domain ownership
 by specifing a route that will return an html downloaded from google*/
-router.get('/verify-domain', (req, res) => {
-    res.send('googlebdff09854abfa74b.html');
+router.get('/verify-domain/googlebdff09854abfa74b.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/googlebdff09854abfa74b.html'));
 });
 /**hook to user activities - google will inform to this route all the activities of the user */
 router.get('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {
