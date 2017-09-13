@@ -48,6 +48,11 @@ router.get('/gdrive/code', async (req: express.Request, res) => {
         Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
     }
 })
+/*Domain Verification -IN google in order to use webhook we should verify domain ownership
+by specifing a route that will return an html downloaded from google*/
+router.get('/verify-domain/googlebdff09854abfa74b.html', (req,res)=>{
+    res.send('googlebdff09854abfa74b.html');
+})
 /**hook to user activities - google will inform to this route all the activities of the user */
 router.get('/webhook/gdrive', async (req: express.Request, res) => {
     Logger.d(TAG, '=================== User Acitivity ===================', 'cyan');
