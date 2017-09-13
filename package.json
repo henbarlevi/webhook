@@ -2,12 +2,13 @@
   "name": "quickstart",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/server.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc --watch",
-    "start": "nodemon ./dist/server.js",
-    "dev": "npm-run-all --parallel compile start"
+    "start-dev": "nodemon ./dist/server.js",
+    "start": "node ./dist/server.js",  
+    "dev": "npm-run-all --parallel compile start-dev"
   },
   "author": "",
   "license": "ISC",
