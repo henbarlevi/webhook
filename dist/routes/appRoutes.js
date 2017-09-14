@@ -11,6 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const path = require("path");
 const gdrive_1 = require("../services/gdrive");
+// ===== DB =====
+const userRep_1 = require("../db/repository/userRep");
 // ===== UTILS =====
 const Logger_1 = require("../utils/Logger");
 const TAG = 'AppRoutes';
@@ -46,8 +48,9 @@ router.get('/gdrive/code', (req, res) => __awaiter(this, void 0, void 0, functio
         //2. Webhook - registering to webhook in order to get user Gdrive activities
         Logger_1.Logger.d(TAG, '========== 2. Webhook - registering to webhook in order to get user Gdrive activities ==========' + code, 'green');
         let subscription = yield gdrive_1.GdriveService.registerWebhook(token.access_token, email);
+        Logger_1.Logger.d(TAG, 'server is hooked to user ' + email + 'Activities', 'green');
         //*saving to db
-        dbUser = {
+        let user = {
             gdrive: {
                 email: email,
                 tokens: {
@@ -66,7 +69,8 @@ router.get('/gdrive/code', (req, res) => __awaiter(this, void 0, void 0, functio
                 }
             }
         };
-        Logger_1.Logger.d(TAG, 'server is hooked to user ' + email + 'Activities', 'green');
+        let userRep = new userRep_1.UserRepository();
+        yield userRep.updateOrCreate(dbUser);
     }
     catch (e) {
         Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
@@ -112,14 +116,21 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
                                                   */
         Logger_1.Logger.d(TAG, '** Proccessing Activities **');
         try {
-            let pageToken = dbUser.gdrive.webhook.pageToken;
+            let userRep = new userRep_1.UserRepository();
+            let user = yield userRep.getUserByChannelId(channelId);
+            if (!user) {
+                throw Error('Got notification for user that doesnt exist in the DB');
+            }
+            let pageToken = user.gdrive.webhook.pageToken;
             if (!pageToken) {
                 Logger_1.Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${dbUser.gdrive.tokens.access_token}**`);
                 let pageToken = yield gdrive_1.GdriveService.getStartPageToken(dbUser.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
                 pageToken = pageToken;
             }
             let nextPageToken = yield gdrive_1.GdriveService.getChanges(channelId, dbUser.gdrive.tokens.access_token, pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
-            dbUser.gdrive.webhook.pageToken = nextPageToken;
+            Logger_1.Logger.d(TAG, '** updating user new pageToken **');
+            user.gdrive.webhook.pageToken = nextPageToken;
+            user.save(() => { console.log('pageToken Updated!'); });
             // res.status(httpCodes.OK).end();
         }
         catch (e) {

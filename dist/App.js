@@ -4,6 +4,7 @@ const path = require("path");
 const express = require("express");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 const config = require("config");
 const appRoutes_1 = require("./routes/appRoutes");
 const ENV = process.env.ENV || 'local';
@@ -20,7 +21,7 @@ class App {
     }
     // Configure Express middleware.
     middleware() {
-        //mongoose.connect(connectionString);
+        mongoose.connect(connectionString);
         this.express.use(logger('dev'));
         this.express.use(bodyParser.json());
         this.express.use(bodyParser.urlencoded({ extended: false }));

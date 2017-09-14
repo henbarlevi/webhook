@@ -29,7 +29,7 @@ class App {
 
   // Configure Express middleware.
   private middleware(): void {
-    //mongoose.connect(connectionString);
+    mongoose.connect(connectionString);
 
     this.express.use(logger('dev'));
     this.express.use(bodyParser.json());

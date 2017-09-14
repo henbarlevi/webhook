@@ -1,6 +1,6 @@
 {
     "prod": {
-        "connectionString": "mongodb://localhost/myLocaldb",
+        "connectionString": "mongodb://multi-webhooks-test:weBhbo3T48MYO7wFPmdKIhi0vhQWTqbeN5y2gM7pgWNsMNB5KISp2ubVnbn5oXidr7Hz3BJRd6mJ5J2oGsaE8g==@multi-webhooks-test.documents.azure.com:10255/?ssl=true",
         "base_url": "https://multi-webhooks-test.azurewebsites.net",
         "gdrive": {
             "client_id": "554559944330-efliq3qbq8r5pieavok9ocal6u322cu2.apps.googleusercontent.com",
