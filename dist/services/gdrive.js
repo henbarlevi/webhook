@@ -6,11 +6,6 @@ const plus = google.plus('v1');
 const request = require("request");
 // import * as httpCodes from 'http-status-codes';
 const uuid = require("uuid");
-// import { Token, fromGoogleToken, GoogleToken } from '../models/Token';
-// import { User } from '../models/User';
-// import { accountNumberFromType, AccountType } from '../models/AccountType';
-// import { WebSubResponse } from '../models/gdrive/WebSubResponse';
-// import { ChangesResponse } from '../models/gdrive/ChangesResponse';
 // === UTILS ===
 const Logger_1 = require("../utils/Logger");
 const TAG = 'Gdrive';
@@ -57,17 +52,6 @@ class GdriveService {
                 Logger_1.Logger.d(TAG, 'token > ' + JSON.stringify(token), 'green');
                 oauth2Client.setCredentials(token);
                 resolve(token);
-                // use api to get user's 'About' info
-                // Logger.d(TAG, `oauth() , tokens : ${JSON.stringify(token)}`);
-                // getUserEmail(token.id_token)
-                //     .then(email => {
-                //         let dbToken: Token = fromGoogleToken(token);
-                //         dbToken.email = email;
-                //         if (email) {
-                //             registerWebhook(token.access_token, email);
-                //         }
-                //         resolve(dbToken);
-                //     });
             });
         });
     }
@@ -122,10 +106,65 @@ class GdriveService {
                     if (subscription.id && subscription.expiration) {
                         Logger_1.Logger.d(TAG, 'Webhook Registeration succeded', 'green');
                         Logger_1.Logger.d(TAG, '============== Webhook Registered Details ============', 'green');
-                        Logger_1.Logger.d(TAG, JSON.stringify(subscription), 'gray');
+                        Logger_1.Logger.d(TAG, 'channel id :' + subscription.id, 'gray');
+                        Logger_1.Logger.d(TAG, 'resourceId :' + subscription.resourceId, 'gray');
+                        Logger_1.Logger.d(TAG, 'resourceUri :' + subscription.resourceUri, 'gray');
+                        Logger_1.Logger.d(TAG, 'the user :' + subscription.token, 'gray'); //"hen@probot.ai"
                         Logger_1.Logger.d(TAG, '============== / Webhook Registered Details ============', 'green');
                         resolve(subscription);
                     }
+                }
+            });
+        });
+    }
+    static getStartPageToken(access_token) {
+        return new Promise((resolve, reject) => {
+            request.get('https://www.googleapis.com/drive/v2/changes/startPageToken', {
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                json: true
+            }, (err, res, body) => {
+                if (!res) {
+                    return reject();
+                }
+                if (res.statusCode > 204) {
+                    reject(res.statusCode);
+                }
+                else {
+                    Logger_1.Logger.d(TAG, 'start page Token > ' + body.startPageToken);
+                    resolve(body.startPageToken);
+                }
+            });
+        });
+    }
+    static getChanges(channelId, access_token, pageToken) {
+        return new Promise((resolve, reject) => {
+            Logger_1.Logger.d(TAG, ` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`);
+            request.get('https://www.googleapis.com/drive/v2/changes?pageToken=' + pageToken, {
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                json: true
+            }, (err, res, body) => {
+                if (err || !body) {
+                    Logger_1.Logger.d(TAG, 'ERR >>>>>>>>  ' + err);
+                }
+                else {
+                    body.items.forEach((change, index) => {
+                        // send changes to stas for proccessing
+                        Logger_1.Logger.d(TAG, `CHANGE ${index} >`);
+                        console.log(change);
+                    });
+                    // fetching next page of changes for this user 
+                    if (body.nextPageToken) {
+                        getDeltaForUser(channelId, body.nextPageToken);
+                    }
+                    // last page token was used , saving the token for the next changes for this user
+                    if (body.newStartPageToken) {
+                        return resolve(body.newStartPageToken);
+                    }
+                    resolve();
                 }
             });
         });

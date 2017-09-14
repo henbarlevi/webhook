@@ -15,7 +15,7 @@ import { iWebSubResponse } from '../models/iWebSubResponse.model';
 // import { User } from '../models/User';
 // import { accountNumberFromType, AccountType } from '../models/AccountType';
 // import { WebSubResponse } from '../models/gdrive/WebSubResponse';
-// import { ChangesResponse } from '../models/gdrive/ChangesResponse';
+ import { iChangesResponse } from '../models/iChangesResponse.model';
 // === UTILS ===
 import { Logger } from '../utils/Logger';
 const TAG: string = 'Gdrive';
@@ -75,17 +75,6 @@ export class GdriveService {
                 Logger.d(TAG, 'token > ' + JSON.stringify(token), 'green')
                 oauth2Client.setCredentials(token);
                 resolve(token);
-                // use api to get user's 'About' info
-                // Logger.d(TAG, `oauth() , tokens : ${JSON.stringify(token)}`);
-                // getUserEmail(token.id_token)
-                //     .then(email => {
-                //         let dbToken: Token = fromGoogleToken(token);
-                //         dbToken.email = email;
-                //         if (email) {
-                //             registerWebhook(token.access_token, email);
-                //         }
-                //         resolve(dbToken);
-                //     });
             });
         });
     }
@@ -110,15 +99,15 @@ export class GdriveService {
         });
     }
     /**hook to user activities - get user push notifications */
-    static registerWebhook(access_token: string, user_email: string) :Promise<iWebSubResponse>{
+    static registerWebhook(access_token: string, user_email: string): Promise<iWebSubResponse> {
         return new Promise((resolve, reject) => {
 
             const exp_date: number = generateExpDate();
-            Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GDRIVE  === user_email : ' + user_email + ' exp_date : ' + exp_date +' access_Token :'+access_token + 'to address : '+`${BASE_URL}/webhook/gdrive`+ '***');
+            Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GDRIVE  === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + 'to address : ' + `${BASE_URL}/webhook/gdrive` + '***');
             // this uniqueId  
             const uniqueId: string = uuid(); //generate random string
             const req_body = {
-                id: uniqueId,
+                id: uniqueId, //channel ID
                 token: user_email,
                 expiration: exp_date,
                 type: "web_hook",
@@ -135,23 +124,80 @@ export class GdriveService {
                 if (err) {
                     Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
                     return reject(err);
-                } 
-                if(res.statusCode != 200){
+                }
+                if (res.statusCode != 200) {
                     reject(JSON.stringify(subscription));
                 }
                 else {
                     if (subscription.id && subscription.expiration) {
-                       Logger.d(TAG,'Webhook Registeration succeded','green');
-                       Logger.d(TAG,'============== Webhook Registered Details ============','green');
-                       Logger.d(TAG,JSON.stringify(subscription),'gray');
-                       
-                       Logger.d(TAG,'============== / Webhook Registered Details ============','green');
-                       
+                        Logger.d(TAG, 'Webhook Registeration succeded', 'green');
+                        Logger.d(TAG, '============== Webhook Registered Details ============', 'green');
+                        Logger.d(TAG, 'channel id :' + subscription.id, 'gray');
+                        Logger.d(TAG, 'resourceId :' + subscription.resourceId, 'gray');
+                        Logger.d(TAG, 'resourceUri :' + subscription.resourceUri, 'gray');
+                        Logger.d(TAG, 'the user :' + subscription.token, 'gray'); //"hen@probot.ai"
+
+                        Logger.d(TAG, '============== / Webhook Registered Details ============', 'green');
+
                         resolve(subscription);
                     }
                 }
             });
         });
+    }
+    static getStartPageToken(access_token: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            request.get('https://www.googleapis.com/drive/v2/changes/startPageToken', {
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                json: true
+            }, (err, res, body: { startPageToken: string }) => {
+                if (!res) {
+                    return reject();
+                }
+                if (res.statusCode > 204) {
+                    reject(res.statusCode);
+
+                }
+                else {
+                    Logger.d(TAG, 'start page Token > ' + body.startPageToken);
+                    resolve(body.startPageToken);
+                }
+            });
+        });
+    }
+    static getChanges(channelId: string,access_token:string, pageToken: string) : Promise<string>{
+        return new Promise((resolve, reject) => {
+            Logger.d(TAG,` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`)
+            request.get('https://www.googleapis.com/drive/v2/changes?pageToken=' + pageToken, {
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                json: true
+            }, (err, res, body: iChangesResponse) => {
+                if (err || !body) {
+                    Logger.d(TAG, 'ERR >>>>>>>>  ' + err);
+                } else {
+                    body.items.forEach((change,index) => {
+                        // send changes to stas for proccessing
+                        Logger.d(TAG,`CHANGE ${index} >`);
+                        console.log(change);
+                        
+                    });
+                    // fetching next page of changes for this user 
+                    if (body.nextPageToken) {
+                        getDeltaForUser(channelId, body.nextPageToken);
+                    }
+                    // last page token was used , saving the token for the next changes for this user
+                    if (body.newStartPageToken) {
+                        return resolve(body.newStartPageToken);
+                    }
+                    resolve();
+                }
+            });
+        });
+
     }
 }
 
