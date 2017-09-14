@@ -59,9 +59,28 @@ router.get('/googlebdff09854abfa74b.html', (req, res) => {
 });
 /**hook to user activities - google will inform to this route all the activities of the user */
 router.get('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {
-    Logger_1.Logger.d(TAG, '=================== User Acitivity ===================', 'cyan');
+    Logger_1.Logger.d(TAG, '=================== User Gdrive Acitivity ===================', 'cyan');
     console.log(req.body);
-    Logger_1.Logger.d(TAG, '=================== / User Acitivity ===================', 'cyan');
+    const channelId = req.headers['x-goog-channel-id'];
+    const channelToken = req.headers['x-goog-channel-token'];
+    const channelExpTime = req.headers['x-goog-channel-expiration'];
+    const channelMsgNum = req.headers['x-goog-message-number'];
+    // vals : sync, add , remove , update , trash , untrash ,change
+    const channelResState = req.headers['x-goog-resource-state'];
+    Logger_1.Logger.d(TAG, 'channelId = ' + channelId);
+    Logger_1.Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
+    if (channelResState == 'sync') {
+        /* After creating a new notification channel to watch a resource, the Drive API sends a sync message to indicate that
+           notifications are starting */
+        res.status(200).end();
+    }
+    else {
+        // process changes
+        console.log('Change!');
+        // Gdrive.handleNotification(channelId, channelResState);
+        // res.status(httpCodes.OK).end();
+    }
+    Logger_1.Logger.d(TAG, '=================== / User Gdrive Acitivity ===================', 'cyan');
 }));
 exports.default = router;
 //-------------------------------------SNIPPETS-------------------------

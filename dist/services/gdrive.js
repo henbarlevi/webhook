@@ -120,7 +120,11 @@ class GdriveService {
                 }
                 else {
                     if (subscription.id && subscription.expiration) {
-                        resolve();
+                        Logger_1.Logger.d(TAG, 'Webhook Registeration succeded', 'green');
+                        Logger_1.Logger.d(TAG, '============== Webhook Registered Details ============', 'green');
+                        Logger_1.Logger.d(TAG, JSON.stringify(subscription), 'gray');
+                        Logger_1.Logger.d(TAG, '============== / Webhook Registered Details ============', 'green');
+                        resolve(subscription);
                     }
                 }
             });
