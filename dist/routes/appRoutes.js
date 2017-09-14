@@ -73,7 +73,7 @@ router.get('/google6415f016f1a68134.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/google6415f016f1a68134.html'));
 });
 /**3.hook to user activities - google will inform to this route all the activities of the user */
-router.get('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {
+router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {
     Logger_1.Logger.d(TAG, '=================== User Gdrive Acitivity ===================', 'cyan');
     console.log(req.body);
     const channelId = req.headers['x-goog-channel-id'];
