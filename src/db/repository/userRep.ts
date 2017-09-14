@@ -49,7 +49,7 @@ export class UserRepository {
                 }
                 if (!userDoc) {
                     Logger.d(TAG, 'Didnt Find user! ');
-                    res(userDoc)
+                    return res(userDoc)
                 }
                 Logger.d(TAG, 'user Found : ');
                 console.log(userDoc);

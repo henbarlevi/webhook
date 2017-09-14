@@ -93,7 +93,7 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
     const channelMsgNum: string = req.headers['x-goog-message-number'];
     // vals : sync, add , remove , update , trash , untrash ,change
     const channelResState: string = req.headers['x-goog-resource-state'];
-    Logger.d(TAG, `=================== User ${channelToken} Gdrive Acitivity ===================`, 'cyan');
+    Logger.d(TAG, `=================== User : ${channelToken}, channelId ${channelId}, Gdrive Acitivity ===================`, 'cyan');
     Logger.d(TAG, 'channelId = ' + channelId);
     Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     if (channelResState == 'sync') {
@@ -125,8 +125,8 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
             let pageToken = user.gdrive.webhook.pageToken;
             if (!pageToken) {
                 Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${user.gdrive.tokens.access_token}**`);
-                let pageToken = await GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
-                pageToken = pageToken;
+                 pageToken = await GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
+               
             }
             let nextPageToken: string = await GdriveService.getChanges(channelId,
                 user.gdrive.tokens.access_token
