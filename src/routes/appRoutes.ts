@@ -124,12 +124,12 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
             if (!user) { throw Error('Got notification for user that doesnt exist in the DB'); }
             let pageToken = user.gdrive.webhook.pageToken;
             if (!pageToken) {
-                Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${dbUser.gdrive.tokens.access_token}**`);
-                let pageToken = await GdriveService.getStartPageToken(dbUser.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
+                Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${user.gdrive.tokens.access_token}**`);
+                let pageToken = await GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
                 pageToken = pageToken;
             }
             let nextPageToken: string = await GdriveService.getChanges(channelId,
-                dbUser.gdrive.tokens.access_token
+                user.gdrive.tokens.access_token
                 , pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
             Logger.d(TAG, '** updating user new pageToken **');
 

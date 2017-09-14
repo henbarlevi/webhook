@@ -38,14 +38,17 @@ class UserRepository {
     }
     getUserByChannelId(channelId) {
         return new Promise((res, rej) => {
-            Logger_1.Logger.d(TAG, '**finding user By Channel IDr** ');
-            user_1.User.findOne({ "gdrive.webhook.id": channelId }, (err, userDoc) => {
+            Logger_1.Logger.d(TAG, `**finding user By Channel ID > ${channelId}** `);
+            user_1.User.findOne({ 'gdrive.webhook.id': channelId }, (err, userDoc) => {
                 if (err) {
                     return rej(err);
                 }
-                if (userDoc) {
+                if (!userDoc) {
                     Logger_1.Logger.d(TAG, 'Didnt Find user! ');
+                    res(userDoc);
                 }
+                Logger_1.Logger.d(TAG, 'user Found : ');
+                console.log(userDoc);
                 res(userDoc);
             });
         });
