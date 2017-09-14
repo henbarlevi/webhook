@@ -45,7 +45,7 @@ class UserRepository {
                 }
                 if (!userDoc) {
                     Logger_1.Logger.d(TAG, 'Didnt Find user! ');
-                    res(userDoc);
+                    return res(userDoc);
                 }
                 Logger_1.Logger.d(TAG, 'user Found : ');
                 console.log(userDoc);

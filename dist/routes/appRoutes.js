@@ -83,7 +83,6 @@ router.get('/google6415f016f1a68134.html', (req, res) => {
 });
 /**3.hook to user activities - google will inform to this route all the activities of the user */
 router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {
-    Logger_1.Logger.d(TAG, '=================== User Gdrive Acitivity ===================', 'cyan');
     console.log(req.body);
     const channelId = req.headers['x-goog-channel-id'];
     const channelToken = req.headers['x-goog-channel-token'];
@@ -91,6 +90,7 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
     const channelMsgNum = req.headers['x-goog-message-number'];
     // vals : sync, add , remove , update , trash , untrash ,change
     const channelResState = req.headers['x-goog-resource-state'];
+    Logger_1.Logger.d(TAG, `=================== User : ${channelToken}, channelId ${channelId}, Gdrive Acitivity ===================`, 'cyan');
     Logger_1.Logger.d(TAG, 'channelId = ' + channelId);
     Logger_1.Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     if (channelResState == 'sync') {
@@ -124,8 +124,7 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
             let pageToken = user.gdrive.webhook.pageToken;
             if (!pageToken) {
                 Logger_1.Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${user.gdrive.tokens.access_token}**`);
-                let pageToken = yield gdrive_1.GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
-                pageToken = pageToken;
+                pageToken = yield gdrive_1.GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
             }
             let nextPageToken = yield gdrive_1.GdriveService.getChanges(channelId, user.gdrive.tokens.access_token, pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
             Logger_1.Logger.d(TAG, '** updating user new pageToken **');
@@ -137,7 +136,7 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
             Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
         }
     }
-    Logger_1.Logger.d(TAG, '=================== / User Gdrive Acitivity ===================', 'cyan');
+    Logger_1.Logger.d(TAG, `=================== User ${channelToken} Gdrive Acitivity ===================`, 'cyan');
 }));
 exports.default = router;
 //-------------------------------------SNIPPETS-------------------------
