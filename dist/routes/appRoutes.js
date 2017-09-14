@@ -111,15 +111,20 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
              (/webhook/gdrive)
                                                   */
         Logger_1.Logger.d(TAG, '** Proccessing Activities **');
-        let pageToken = dbUser.gdrive.webhook.pageToken;
-        if (!pageToken) {
-            Logger_1.Logger.d(TAG, '** doesnt have pageToken for that user - creating StartpageToken ');
-            let pageToken = yield gdrive_1.GdriveService.getStartPageToken(dbUser.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
-            pageToken = pageToken;
+        try {
+            let pageToken = dbUser.gdrive.webhook.pageToken;
+            if (!pageToken) {
+                Logger_1.Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${dbUser.gdrive.tokens.access_token}**`);
+                let pageToken = yield gdrive_1.GdriveService.getStartPageToken(dbUser.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
+                pageToken = pageToken;
+            }
+            let nextPageToken = yield gdrive_1.GdriveService.getChanges(channelId, dbUser.gdrive.tokens.access_token, pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
+            dbUser.gdrive.webhook.pageToken = nextPageToken;
+            // res.status(httpCodes.OK).end();
         }
-        let nextPageToken = yield gdrive_1.GdriveService.getChanges(channelId, dbUser.gdrive.tokens.access_token, pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
-        dbUser.gdrive.webhook.pageToken = nextPageToken;
-        // res.status(httpCodes.OK).end();
+        catch (e) {
+            Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
+        }
     }
     Logger_1.Logger.d(TAG, '=================== / User Gdrive Acitivity ===================', 'cyan');
 }));

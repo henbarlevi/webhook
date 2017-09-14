@@ -113,17 +113,23 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
              (/webhook/gdrive)                                    
                                                   */
         Logger.d(TAG, '** Proccessing Activities **');
-        let pageToken = dbUser.gdrive.webhook.pageToken;
-        if (!pageToken) {
-            Logger.d(TAG, '** doesnt have pageToken for that user - creating StartpageToken ');
-            let pageToken = await GdriveService.getStartPageToken(dbUser.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
-            pageToken = pageToken;
+        try {
+
+            let pageToken = dbUser.gdrive.webhook.pageToken;
+            if (!pageToken) {
+                Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${dbUser.gdrive.tokens.access_token}**`);
+                let pageToken = await GdriveService.getStartPageToken(dbUser.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
+                pageToken = pageToken;
+            }
+            let nextPageToken: string = await GdriveService.getChanges(channelId,
+                dbUser.gdrive.tokens.access_token
+                , pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
+            dbUser.gdrive.webhook.pageToken = nextPageToken;
+            // res.status(httpCodes.OK).end();
         }
-        let nextPageToken: string = await GdriveService.getChanges(channelId,
-                                                                    dbUser.gdrive.tokens.access_token
-                                                                    , pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
-        dbUser.gdrive.webhook.pageToken = nextPageToken;
-        // res.status(httpCodes.OK).end();
+        catch (e) {
+            Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
+        }
     }
     Logger.d(TAG, '=================== / User Gdrive Acitivity ===================', 'cyan');
 
