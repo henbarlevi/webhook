@@ -8,7 +8,7 @@ import * as config from 'config';
 import appRoutes from './routes/appRoutes';
 import { Logger } from './utils/logger'
 const TAG = 'App';
-const ENV: string = process.env.ENV || 'local';
+const ENV: string = process.env.NODE_ENV || 'local';
 const envConfig: any = config.get(`${ENV}`);
 const connectionString: string = envConfig.connectionString || 'mongodb://localhost/mydb';
 

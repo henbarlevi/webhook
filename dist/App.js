@@ -9,7 +9,7 @@ const config = require("config");
 const appRoutes_1 = require("./routes/appRoutes");
 const logger_1 = require("./utils/logger");
 const TAG = 'App';
-const ENV = process.env.ENV || 'local';
+const ENV = process.env.NODE_ENV || 'local';
 const envConfig = config.get(`${ENV}`);
 const connectionString = envConfig.connectionString || 'mongodb://localhost/mydb';
 logger_1.Logger.d(TAG, '=================== App Config =================== ');
