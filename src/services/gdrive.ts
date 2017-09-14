@@ -114,7 +114,7 @@ export class GdriveService {
         return new Promise((resolve, reject) => {
 
             const exp_date: number = generateExpDate();
-            Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GDRIVE  === user_email : ' + user_email + ' exp_date : ' + exp_date + '***');
+            Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GDRIVE  === user_email : ' + user_email + ' exp_date : ' + exp_date +' access_Token :'+access_token + 'to address : '+`${BASE_URL}/webhook/gdrive`+ '***');
             // this uniqueId  
             const uniqueId: string = uuid(); //generate random string
             const req_body = {

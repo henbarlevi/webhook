@@ -50,9 +50,6 @@ router.get('/gdrive/code', async (req: express.Request, res) => {
 })
 /*Domain Verification -IN google in order to use webhook we should verify domain ownership
 by specifing a route that will return an html downloaded from google*/
-router.get('/verify-domain/googlebdff09854abfa74b.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/googlebdff09854abfa74b.html'));
-})
 router.get('/googlebdff09854abfa74b.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/googlebdff09854abfa74b.html'));
 })

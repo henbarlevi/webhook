@@ -93,7 +93,7 @@ class GdriveService {
     static registerWebhook(access_token, user_email) {
         return new Promise((resolve, reject) => {
             const exp_date = generateExpDate();
-            Logger_1.Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GDRIVE  === user_email : ' + user_email + ' exp_date : ' + exp_date + '***');
+            Logger_1.Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GDRIVE  === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + 'to address : ' + `${BASE_URL}/webhook/gdrive` + '***');
             // this uniqueId  
             const uniqueId = uuid(); //generate random string
             const req_body = {
