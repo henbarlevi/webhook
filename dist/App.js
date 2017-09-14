@@ -7,9 +7,15 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const config = require("config");
 const appRoutes_1 = require("./routes/appRoutes");
+const logger_1 = require("./utils/logger");
+const TAG = 'App';
 const ENV = process.env.ENV || 'local';
 const envConfig = config.get(`${ENV}`);
 const connectionString = envConfig.connectionString || 'mongodb://localhost/mydb';
+logger_1.Logger.d(TAG, '=================== App Config =================== ');
+console.log('ENV >' + ENV);
+console.log(envConfig);
+logger_1.Logger.d(TAG, '=================== / App Config =================== ');
 //const connectionString: string = process.env.DB_CONNECTION_STRING || 'mongodb://localhost/mydb';
 // Creates and configures an ExpressJS web server.
 class App {

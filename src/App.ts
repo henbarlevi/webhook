@@ -6,10 +6,16 @@ import * as mongoose from 'mongoose';
 import * as config from 'config';
 
 import appRoutes from './routes/appRoutes';
-
+import { Logger } from './utils/logger'
+const TAG = 'App';
 const ENV: string = process.env.ENV || 'local';
-const envConfig : any= config.get(`${ENV}`);
+const envConfig: any = config.get(`${ENV}`);
 const connectionString: string = envConfig.connectionString || 'mongodb://localhost/mydb';
+
+Logger.d(TAG, '=================== App Config =================== ');
+console.log('ENV >' + ENV);
+console.log(envConfig);
+Logger.d(TAG, '=================== / App Config =================== ');
 
 //const connectionString: string = process.env.DB_CONNECTION_STRING || 'mongodb://localhost/mydb';
 
