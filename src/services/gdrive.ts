@@ -110,7 +110,7 @@ export class GdriveService {
         });
     }
     /**hook to user activities - get user push notifications */
-    static registerWebhook(access_token: string, user_email: string) {
+    static registerWebhook(access_token: string, user_email: string) :Promise<iWebSubResponse>{
         return new Promise((resolve, reject) => {
 
             const exp_date: number = generateExpDate();

@@ -5,13 +5,15 @@ import * as path from 'path';
 import { GdriveService } from '../services/gdrive';
 // ===== Models =====
 import { iGoogleToken } from '../models/iGoogleToken.model';
+import { iWebSubResponse } from '../models/iWebSubResponse.model';
+
 // ===== UTILS =====
 import { Logger } from '../utils/Logger'
 const TAG: string = 'AppRoutes';
 const router: express.Router = express.Router();
 
 
-
+let user: any = {}; //just for example , instead of using a DB we just saving user details here
 
 router.get('/', (req: express.Request, res: express.Response) => {
     res.send('welcome to server api');
@@ -39,8 +41,28 @@ router.get('/gdrive/code', async (req: express.Request, res) => {
         Logger.d(TAG, 'token >' + token, 'green');
         let email: string = await GdriveService.getUserEmail(token.id_token);
         Logger.d(TAG, 'user email >' + email, 'gray');
+        
         //2. Webhook - registering to webhook in order to get user Gdrive activities
-        await GdriveService.registerWebhook(token.access_token, email);
+        Logger.d(TAG, '========== 2. Webhook - registering to webhook in order to get user Gdrive activities ==========' + code, 'green');
+        let subscription : iWebSubResponse = await GdriveService.registerWebhook(token.access_token, email);
+        //saving to db
+        user.gdrive = {
+            email: email,
+            tokens: {
+                access_token: token.access_token,
+                id_token: token.id_token,
+                refresh_token: token.refresh_token,
+                token_type: token.token_type,
+                expiry_date: token.expiry_date
+            },
+            webhook:{
+                channelId :subscription.id
+            }
+        }
+        //saving to db:
+        user.gdrive.webhook = {
+
+        }
         Logger.d(TAG, 'server is hooked to user ' + email + 'Activities', 'green');
 
     }
@@ -53,7 +75,8 @@ by specifing a route that will return an html downloaded from google*/
 router.get('/googlebdff09854abfa74b.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/googlebdff09854abfa74b.html'));
 })
-/**hook to user activities - google will inform to this route all the activities of the user */
+
+/**3.hook to user activities - google will inform to this route all the activities of the user */
 router.get('/webhook/gdrive', async (req: express.Request, res) => {
     Logger.d(TAG, '=================== User Gdrive Acitivity ===================', 'cyan');
     console.log(req.body);
@@ -69,6 +92,7 @@ router.get('/webhook/gdrive', async (req: express.Request, res) => {
     if (channelResState == 'sync') {
         /* After creating a new notification channel to watch a resource, the Drive API sends a sync message to indicate that
            notifications are starting */
+        Logger.d(TAG, '** Sending 200 to Google sync call **');
         res.status(200).end();
     } else {
         // process changes
