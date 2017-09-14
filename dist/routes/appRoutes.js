@@ -54,6 +54,9 @@ by specifing a route that will return an html downloaded from google*/
 router.get('/verify-domain/googlebdff09854abfa74b.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/googlebdff09854abfa74b.html'));
 });
+router.get('/googlebdff09854abfa74b.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/googlebdff09854abfa74b.html'));
+});
 /**hook to user activities - google will inform to this route all the activities of the user */
 router.get('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {
     Logger_1.Logger.d(TAG, '=================== User Acitivity ===================', 'cyan');
