@@ -70,7 +70,7 @@ router.get('/gdrive/code', (req, res) => __awaiter(this, void 0, void 0, functio
             }
         };
         let userRep = new userRep_1.UserRepository();
-        yield userRep.updateOrCreate(dbUser);
+        yield userRep.updateOrCreate(user);
     }
     catch (e) {
         Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');

@@ -70,7 +70,7 @@ router.get('/gdrive/code', async (req: express.Request, res) => {
             }
         }
         let userRep = new UserRepository();
-        await userRep.updateOrCreate(dbUser);
+        await userRep.updateOrCreate(user);
 
     }
     catch (e) {

@@ -10,8 +10,13 @@ export class UserRepository {
             let options = { upsert: true, new: true, setDefaultsOnInsert: false }; //options that make create new doc record if it doesnt find one https://stackoverflow.com/questions/33305623/mongoose-create-document-if-not-exists-otherwise-update-return-document-in 
             User.findOne({ "gdrive.email": user.gdrive.email }, user, (err, userDoc) => {
                 if (err) {
+                    Logger.d(TAG, 'DB ERROR! ', 'red');
+
                     return rej(err);
                 }
+                Logger.d(TAG,'user created/updated');
+                console.log(userDoc);
+                
                 res(userDoc);
             })
             // let options = { upsert: true, new: true, setDefaultsOnInsert: false }; //options that make create new doc record if it doesnt find one https://stackoverflow.com/questions/33305623/mongoose-create-document-if-not-exists-otherwise-update-return-document-in 
@@ -33,7 +38,7 @@ export class UserRepository {
 
         })
     }
-    getUserByChannelId(channelId: string) : Promise<any> {
+    getUserByChannelId(channelId: string): Promise<any> {
         return new Promise((res, rej) => {
             Logger.d(TAG, '**finding user By Channel IDr** ');
 
