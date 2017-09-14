@@ -85,7 +85,6 @@ router.get('/google6415f016f1a68134.html', (req, res) => {
 
 /**3.hook to user activities - google will inform to this route all the activities of the user */
 router.post('/webhook/gdrive', async (req: express.Request, res) => {
-    Logger.d(TAG, '=================== User Gdrive Acitivity ===================', 'cyan');
     console.log(req.body);
 
     const channelId: string = req.headers['x-goog-channel-id'];
@@ -94,6 +93,7 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
     const channelMsgNum: string = req.headers['x-goog-message-number'];
     // vals : sync, add , remove , update , trash , untrash ,change
     const channelResState: string = req.headers['x-goog-resource-state'];
+    Logger.d(TAG, `=================== User ${channelToken} Gdrive Acitivity ===================`, 'cyan');
     Logger.d(TAG, 'channelId = ' + channelId);
     Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     if (channelResState == 'sync') {
@@ -141,7 +141,7 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
             Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
         }
     }
-    Logger.d(TAG, '=================== / User Gdrive Acitivity ===================', 'cyan');
+    Logger.d(TAG, `=================== User ${channelToken} Gdrive Acitivity ===================`, 'cyan');
 
 })
 
