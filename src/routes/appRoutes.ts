@@ -116,11 +116,11 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
         let pageToken = dbUser.gdrive.webhook.pageToken;
         if (!pageToken) {
             Logger.d(TAG, '** doesnt have pageToken for that user - creating StartpageToken ');
-            let pageToken = await GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
+            let pageToken = await GdriveService.getStartPageToken(dbUser.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
             pageToken = pageToken;
         }
         let nextPageToken: string = await GdriveService.getChanges(channelId,
-                                                                    user.gdrive.tokens.access_token
+                                                                    dbUser.gdrive.tokens.access_token
                                                                     , pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
         dbUser.gdrive.webhook.pageToken = nextPageToken;
         // res.status(httpCodes.OK).end();
