@@ -81,18 +81,21 @@ by specifing a route that will return an html downloaded from google*/
 router.get('/google6415f016f1a68134.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/google6415f016f1a68134.html'));
 });
-/**3.hook to user activities - google will inform to this route all the activities of the user */
+/**3.hook to user activities - google will inform to this route all the activities of the user
+ * https://developers.google.com/drive/v2/web/push#stopping-notifications
+*/
 router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {
     console.log(req.body);
-    const channelId = req.headers['x-goog-channel-id'];
-    const channelToken = req.headers['x-goog-channel-token'];
-    const channelExpTime = req.headers['x-goog-channel-expiration'];
-    const channelMsgNum = req.headers['x-goog-message-number'];
+    const channelId = req.headers['x-goog-channel-Id'];
+    const channelToken = req.headers['x-goog-channel-token']; // user, hen@probot.ai
+    const channelExpTime = req.headers['x-goog-channel-expiration']; //channel experation time
+    const channelMsgNum = req.headers['x-goog-message-number']; //Integer that identifies this message for this notification channel. Value is always 1 for sync message
+    const resourceId = req.headers['X-Goog-Resource-ID'];
     // vals : sync, add , remove , update , trash , untrash ,change
     const channelResState = req.headers['x-goog-resource-state'];
-    Logger_1.Logger.d(TAG, `=================== User : ${channelToken}, channelId ${channelId}, Gdrive Acitivity ===================`, 'cyan');
+    Logger_1.Logger.d(TAG, `=================== User : ${channelToken}, channelId >${channelId}, resourceId > ${resourceId} Gdrive Acitivity ===================`, 'cyan');
     Logger_1.Logger.d(TAG, 'channelId = ' + channelId);
-    Logger_1.Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
+    //Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     if (channelResState == 'sync') {
         /* After creating a new notification channel to watch a resource, the Drive API sends a sync message to indicate that
            notifications are starting */
