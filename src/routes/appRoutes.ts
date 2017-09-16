@@ -97,8 +97,10 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
     
     // vals : sync, add , remove , update , trash , untrash ,change
     const channelResState: string = req.headers['x-goog-resource-state'];
-    Logger.d(TAG, `=================== User : ${channelToken}, channelId >${channelId}, resourceId > ${resourceId} Gdrive Acitivity ===================`, 'cyan');
+    Logger.d(TAG, `=================== User : ${channelToken} Gdrive Acitivity ===================`, 'cyan');
     Logger.d(TAG, 'channelId = ' + channelId);
+    Logger.d(TAG, 'resourceId = ' + resourceId);
+    
     //Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     if (channelResState == 'sync') {
         /* After creating a new notification channel to watch a resource, the Drive API sends a sync message to indicate that
