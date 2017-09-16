@@ -1,9 +1,10 @@
 import { iFile } from './iFile.model';
+//https://developers.google.com/drive/v2/reference/changes/list
 //when getting the changes of user
 export interface iChangesResponse {
     /**A link to the next page of changes. */
     nextLink: string;
-    items: { fileId: string, file: File }[];
+    items: { fileId: string, file: iFile }[];
     /**
      * The page token for the next page of changes.
      *  This will be absent if the end of the changes list has been reached.

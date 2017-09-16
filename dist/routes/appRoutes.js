@@ -17,8 +17,8 @@ const userRep_1 = require("../db/repository/userRep");
 const Logger_1 = require("../utils/Logger");
 const TAG = 'AppRoutes';
 const router = express.Router();
-const fakeUser_1 = require("../db/repository/fakeUser"); //just for example , instead of using a DB we just saving user details here
-let dbUser = fakeUser_1.user;
+// import { user, iUserDB } from '../db/repository/fakeUser'; //just for example , instead of using a DB we just saving user details here
+// let dbUser = user;
 router.get('/', (req, res) => {
     res.send('welcome to server api');
 });
@@ -120,8 +120,8 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
              (/webhook/gdrive)
                                                   */
         Logger_1.Logger.d(TAG, '** Proccessing Activities **');
+        let userRep = new userRep_1.UserRepository();
         try {
-            let userRep = new userRep_1.UserRepository();
             let user = yield userRep.getUserByChannelId(channelId);
             if (!user) {
                 throw Error('Got notification for user that doesnt exist in the DB');
@@ -140,6 +140,14 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
         }
         catch (e) {
             Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
+            Logger_1.Logger.d(TAG, 'couldnt get changes of user so - shutting down the notifiaciton channel' + e);
+            try {
+                let user = yield userRep.getUserByChannelId(channelId);
+                yield gdrive_1.GdriveService.stopNotifications(channelId, user.gdrive.tokens.access_token, resourceId);
+            }
+            catch (e) {
+                Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>> Couldnt shut down the channel - user credentials not found i db/request Failed' + e);
+            }
         }
     }
     Logger_1.Logger.d(TAG, `=================== /END User ${channelToken} Gdrive Acitivity ===================`, 'cyan');

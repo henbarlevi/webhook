@@ -168,6 +168,7 @@ export class GdriveService {
             });
         });
     }
+    /**https://developers.google.com/drive/v2/reference/changes/list */
     static getChanges(channelId: string, access_token: string, pageToken: string): Promise<string> {
         return new Promise((resolve, reject) => {
             Logger.d(TAG, ` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`)
@@ -191,7 +192,7 @@ export class GdriveService {
 
                     console.log(body);
                     console.log(JSON.stringify(body.items));
-                    
+
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^   END   CHANGES      ^^^^^^^^^^^^^^^^^');
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
@@ -234,6 +235,8 @@ export class GdriveService {
                     Logger.d(TAG, '- Stop Notifcations ERR >>>>>>>>>>>>>>>>>>>>>> ' + res.statusCode + '  -' + err, 'red');
                     return reject();
                 } else {
+                    Logger.d(TAG, '- Stop notifications - Channel Closed  ' + res.statusCode + '  -' + err, 'green');
+
                     resolve();
                 }
             });

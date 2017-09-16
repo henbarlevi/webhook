@@ -139,6 +139,7 @@ class GdriveService {
             });
         });
     }
+    /**https://developers.google.com/drive/v2/reference/changes/list */
     static getChanges(channelId, access_token, pageToken) {
         return new Promise((resolve, reject) => {
             Logger_1.Logger.d(TAG, ` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`);
@@ -202,6 +203,7 @@ class GdriveService {
                     return reject();
                 }
                 else {
+                    Logger_1.Logger.d(TAG, '- Stop notifications - Channel Closed  ' + res.statusCode + '  -' + err, 'green');
                     resolve();
                 }
             });

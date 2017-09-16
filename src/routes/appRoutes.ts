@@ -7,15 +7,15 @@ import { GdriveService } from '../services/gdrive';
 import { iGoogleToken } from '../models/iGoogleToken.model';
 import { iWebSubResponse } from '../models/iWebSubResponse.model';
 // ===== DB =====
-import { UserRepository } from '../db/repository/userRep'
+import { UserRepository, iUserDB } from '../db/repository/userRep'
 // ===== UTILS =====
 import { Logger } from '../utils/Logger'
 const TAG: string = 'AppRoutes';
 const router: express.Router = express.Router();
 
 
-import { user, iUserDB } from '../db/repository/fakeUser'; //just for example , instead of using a DB we just saving user details here
-let dbUser = user;
+// import { user, iUserDB } from '../db/repository/fakeUser'; //just for example , instead of using a DB we just saving user details here
+// let dbUser = user;
 router.get('/', (req: express.Request, res: express.Response) => {
     res.send('welcome to server api');
 })
@@ -94,14 +94,14 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
     const channelExpTime: string = req.headers['x-goog-channel-expiration']; //channel experation time
     const channelMsgNum: string = req.headers['x-goog-message-number'];//Integer that identifies this message for this notification channel. Value is always 1 for sync message
     const resourceId: string = req.headers['x-goog-resource-id'];
-    
+
     // vals : sync, add , remove , update , trash , untrash ,change
     const channelResState: string = req.headers['x-goog-resource-state'];
     Logger.d(TAG, `=================== User : ${channelToken} Gdrive Acitivity ===================`, 'cyan');
     Logger.d(TAG, 'channelId = ' + channelId);
     Logger.d(TAG, 'resourceId = ' + resourceId);
     //Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
-    
+
     //Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     if (channelResState == 'sync') {
         /* After creating a new notification channel to watch a resource, the Drive API sends a sync message to indicate that
@@ -124,16 +124,16 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
              (/webhook/gdrive)                                    
                                                   */
         Logger.d(TAG, '** Proccessing Activities **');
+        let userRep = new UserRepository();
 
         try {
-            let userRep = new UserRepository();
-            let user  = await userRep.getUserByChannelId(channelId);
+            let user = await userRep.getUserByChannelId(channelId);
             if (!user) { throw Error('Got notification for user that doesnt exist in the DB'); }
             let pageToken = user.gdrive.webhook.pageToken;
             if (!pageToken) {
                 Logger.d(TAG, `** doesnt have pageToken for that user - creating StartpageToken  , accessToken : ${user.gdrive.tokens.access_token}**`);
-                 pageToken = await GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
-               
+                pageToken = await GdriveService.getStartPageToken(user.gdrive.tokens.access_token); //in real app we should pull access token by channel id  - but here we just doing it on one user
+
             }
             let nextPageToken: string = await GdriveService.getChanges(channelId,
                 user.gdrive.tokens.access_token
@@ -147,6 +147,19 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
         }
         catch (e) {
             Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
+            Logger.d(TAG, 'couldnt get changes of user so - shutting down the notifiaciton channel' + e);
+            try {
+                let user: iUserDB = await userRep.getUserByChannelId(channelId);
+                await GdriveService.stopNotifications(channelId, user.gdrive.tokens.access_token, resourceId)
+                
+            }
+            catch (e) {
+                Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>> Couldnt shut down the channel - user credentials not found i db/request Failed' + e);
+
+            }
+
+
+
         }
     }
     Logger.d(TAG, `=================== /END User ${channelToken} Gdrive Acitivity ===================`, 'cyan');
