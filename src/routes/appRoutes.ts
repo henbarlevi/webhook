@@ -89,11 +89,11 @@ router.get('/google6415f016f1a68134.html', (req, res) => {
 router.post('/webhook/gdrive', async (req: express.Request, res) => {
     console.log(req.body);
 
-    const channelId: string = req.headers['x-goog-channel-Id'];
+    const channelId: string = req.headers['x-goog-channel-id'];
     const channelToken: string = req.headers['x-goog-channel-token'];// user, hen@probot.ai
     const channelExpTime: string = req.headers['x-goog-channel-expiration']; //channel experation time
     const channelMsgNum: string = req.headers['x-goog-message-number'];//Integer that identifies this message for this notification channel. Value is always 1 for sync message
-    const resourceId: string = req.headers['X-Goog-Resource-ID'];
+    const resourceId: string = req.headers['X-Goog-Resource-id'];
     
     // vals : sync, add , remove , update , trash , untrash ,change
     const channelResState: string = req.headers['x-goog-resource-state'];
