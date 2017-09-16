@@ -100,6 +100,7 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
     Logger.d(TAG, `=================== User : ${channelToken} Gdrive Acitivity ===================`, 'cyan');
     Logger.d(TAG, 'channelId = ' + channelId);
     Logger.d(TAG, 'resourceId = ' + resourceId);
+    Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     
     //Logger.d(TAG, '=== gdrive webhook notification == : ' + JSON.stringify(req.headers));
     if (channelResState == 'sync') {
