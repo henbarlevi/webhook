@@ -1,4 +1,5 @@
 import { iFile } from './iFile.model';
+//when getting the changes of user
 export interface iChangesResponse {
     /**A link to the next page of changes. */
     nextLink: string;

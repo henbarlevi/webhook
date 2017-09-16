@@ -98,7 +98,9 @@ export class GdriveService {
                 });
         });
     }
-    /**hook to user activities - get user push notifications */
+    /**hook to user activities - get user push notifications 
+     * https://developers.google.com/drive/v2/reference/changes/watch
+    */
     static registerWebhook(access_token: string, user_email: string): Promise<iWebSubResponse> {
         return new Promise((resolve, reject) => {
 
@@ -113,7 +115,6 @@ export class GdriveService {
                 type: "web_hook",
                 address: `${BASE_URL}/webhook/gdrive` //where the notifications should go to
             };
-            //https://developers.google.com/drive/v2/reference/changes/watch
             request.post('https://www.googleapis.com/drive/v2/changes/watch', {
                 json: true,
                 headers: {
@@ -189,6 +190,8 @@ export class GdriveService {
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
 
                     console.log(body);
+                    console.log(JSON.stringify(body.items));
+                    
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^   END   CHANGES      ^^^^^^^^^^^^^^^^^');
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
