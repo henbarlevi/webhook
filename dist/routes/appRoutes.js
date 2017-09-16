@@ -134,7 +134,8 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
             let nextPageToken = yield gdrive_1.GdriveService.getChanges(channelId, user.gdrive.tokens.access_token, pageToken); //in real app we should pull access token by channel id  - but here we just doing it on one user,
             Logger_1.Logger.d(TAG, '** updating user new pageToken **');
             user.gdrive.webhook.pageToken = nextPageToken;
-            user.save(() => { console.log('pageToken Updated!'); });
+            yield user.save();
+            console.log('pageToken Updated!');
             // res.status(httpCodes.OK).end();
         }
         catch (e) {

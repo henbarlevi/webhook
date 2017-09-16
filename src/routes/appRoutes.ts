@@ -141,7 +141,8 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
             Logger.d(TAG, '** updating user new pageToken **');
 
             user.gdrive.webhook.pageToken = nextPageToken;
-            user.save(()=>{console.log('pageToken Updated!')});
+            await user.save();
+            console.log('pageToken Updated!');
             // res.status(httpCodes.OK).end();
         }
         catch (e) {
