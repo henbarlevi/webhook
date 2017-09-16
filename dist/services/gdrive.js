@@ -158,7 +158,7 @@ class GdriveService {
                     Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
                     Logger_1.Logger.d(TAG, `^^^^^^^^^^^   CHANNEL ${channelId}    CHANGES      ^^^^^^^^^`);
                     Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-                    console.log('body');
+                    console.log(body);
                     Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
                     Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^   END   CHANGES      ^^^^^^^^^^^^^^^^^');
                     Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
@@ -170,6 +170,36 @@ class GdriveService {
                     if (body.newStartPageToken) {
                         return resolve(body.newStartPageToken);
                     }
+                    resolve();
+                }
+            });
+        });
+    }
+    /*if we wont to shut down a notification channel
+     https://developers.google.com/drive/v2/web/push#stopping-notifications */
+    static stopNotifications(channelId, access_token, resourceId) {
+        return new Promise((resolve, reject) => {
+            Logger_1.Logger.d(TAG, ` ** Stop notifications for channel > ${channelId} , access Token : ${access_token},resource Id: ${resourceId}`);
+            const body_req = {
+                "id": channelId,
+                "resourceId": resourceId
+            };
+            request.post('https://www.googleapis.com/drive/v2/channels/stop', {
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                body: body_req,
+                json: true
+            }, (err, res, body) => {
+                if (!res) {
+                    Logger_1.Logger.d(TAG, '- Stop Notifcations ERR >>>>>>>>>>>>>>>>>>>>>> - couldnt send request (internet maybe disconnected)', 'red');
+                    return reject();
+                }
+                if (err || res.statusCode > 204) {
+                    Logger_1.Logger.d(TAG, '- Stop Notifcations ERR >>>>>>>>>>>>>>>>>>>>>> ' + res.statusCode + '  -' + err, 'red');
+                    return reject();
+                }
+                else {
                     resolve();
                 }
             });

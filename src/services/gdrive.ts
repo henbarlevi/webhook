@@ -188,7 +188,7 @@ export class GdriveService {
                     Logger.d(TAG, `^^^^^^^^^^^   CHANNEL ${channelId}    CHANGES      ^^^^^^^^^`);
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
 
-                    console.log('body');
+                    console.log(body);
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^   END   CHANGES      ^^^^^^^^^^^^^^^^^');
                     Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
@@ -206,6 +206,35 @@ export class GdriveService {
             });
         });
 
+    }
+    /*if we wont to shut down a notification channel
+     https://developers.google.com/drive/v2/web/push#stopping-notifications */
+    static stopNotifications(channelId: string, access_token: string, resourceId: string) {
+        return new Promise((resolve, reject) => {
+            Logger.d(TAG, ` ** Stop notifications for channel > ${channelId} , access Token : ${access_token},resource Id: ${resourceId}`)
+            const body_req = {
+                "id": channelId,
+                "resourceId": resourceId
+            }
+            request.post('https://www.googleapis.com/drive/v2/channels/stop', {
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                body: body_req,
+                json: true
+            }, (err, res, body) => {
+                if (!res) {
+                    Logger.d(TAG, '- Stop Notifcations ERR >>>>>>>>>>>>>>>>>>>>>> - couldnt send request (internet maybe disconnected)', 'red');
+                    return reject();
+                }
+                if (err || res.statusCode > 204) {
+                    Logger.d(TAG, '- Stop Notifcations ERR >>>>>>>>>>>>>>>>>>>>>> ' + res.statusCode + '  -' + err, 'red');
+                    return reject();
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 }
 
