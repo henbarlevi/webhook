@@ -151,11 +151,17 @@ class GdriveService {
                     Logger_1.Logger.d(TAG, 'ERR >>>>>>>>  ' + err);
                 }
                 else {
-                    body.items.forEach((change, index) => {
-                        // send changes to stas for proccessing
-                        Logger_1.Logger.d(TAG, `CHANGE ${index} >`);
-                        console.log(change);
-                    });
+                    // body.items.forEach((change,index) => { //items =changes
+                    //     Logger.d(TAG,`CHANGE ${index} >`);
+                    //     console.log(change);
+                    // });
+                    Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+                    Logger_1.Logger.d(TAG, `^^^^^^^^^^^   CHANNEL ${channelId}    CHANGES      ^^^^^^^^^`);
+                    Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+                    console.log('body');
+                    Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+                    Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^   END   CHANGES      ^^^^^^^^^^^^^^^^^');
+                    Logger_1.Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
                     // fetching next page of changes for this user 
                     if (body.nextPageToken) {
                         getDeltaForUser(channelId, body.nextPageToken);

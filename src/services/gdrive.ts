@@ -15,7 +15,7 @@ import { iWebSubResponse } from '../models/iWebSubResponse.model';
 // import { User } from '../models/User';
 // import { accountNumberFromType, AccountType } from '../models/AccountType';
 // import { WebSubResponse } from '../models/gdrive/WebSubResponse';
- import { iChangesResponse } from '../models/iChangesResponse.model';
+import { iChangesResponse } from '../models/iChangesResponse.model';
 // === UTILS ===
 import { Logger } from '../utils/Logger';
 const TAG: string = 'Gdrive';
@@ -167,9 +167,9 @@ export class GdriveService {
             });
         });
     }
-    static getChanges(channelId: string,access_token:string, pageToken: string) : Promise<string>{
+    static getChanges(channelId: string, access_token: string, pageToken: string): Promise<string> {
         return new Promise((resolve, reject) => {
-            Logger.d(TAG,` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`)
+            Logger.d(TAG, ` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`)
             request.get('https://www.googleapis.com/drive/v2/changes?pageToken=' + pageToken, {
                 headers: {
                     Authorization: 'Bearer ' + access_token
@@ -179,12 +179,20 @@ export class GdriveService {
                 if (err || !body) {
                     Logger.d(TAG, 'ERR >>>>>>>>  ' + err);
                 } else {
-                    body.items.forEach((change,index) => {
-                        // send changes to stas for proccessing
-                        Logger.d(TAG,`CHANGE ${index} >`);
-                        console.log(change);
-                        
-                    });
+                    // body.items.forEach((change,index) => { //items =changes
+                    //     Logger.d(TAG,`CHANGE ${index} >`);
+                    //     console.log(change);
+
+                    // });
+                    Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+                    Logger.d(TAG, `^^^^^^^^^^^   CHANNEL ${channelId}    CHANGES      ^^^^^^^^^`);
+                    Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+
+                    console.log('body');
+                    Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+                    Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^   END   CHANGES      ^^^^^^^^^^^^^^^^^');
+                    Logger.d(TAG, '^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+
                     // fetching next page of changes for this user 
                     if (body.nextPageToken) {
                         getDeltaForUser(channelId, body.nextPageToken);
