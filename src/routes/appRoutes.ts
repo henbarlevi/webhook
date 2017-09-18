@@ -70,7 +70,8 @@ router.get('/gdrive/code', async (req: express.Request, res) => {
             }
         }
         let userRep = new UserRepository();
-        await userRep.updateOrCreate(user);
+        await userRep.updateOrCreateUserGoogleCreds(email,token);
+        await userRep.updateUserGdriveWebhook(email,subscription);
 
     }
     catch (e) {
@@ -127,7 +128,7 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
         let userRep = new UserRepository();
 
         try {
-            let user = await userRep.getUserByChannelId(channelId);
+            let user = await userRep.getUserByGdriveChannelId(channelId);
             if (!user) { throw Error('Got notification for user that doesnt exist in the DB'); }
             let pageToken = user.gdrive.webhook.pageToken;
             if (!pageToken) {
@@ -149,8 +150,8 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
             Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
             Logger.d(TAG, 'couldnt get changes of user so - shutting down the notifiaciton channel' + e);
             try {
-                let user: iUserDB = await userRep.getUserByChannelId(channelId);
-                await GdriveService.stopNotifications(channelId, user.gdrive.tokens.access_token, resourceId)
+                let user: iUserDB = await userRep.getUserByGdriveChannelId(channelId);
+                await GdriveService.stopNotifications(channelId, user.google.tokens.access_token, resourceId)
                 
             }
             catch (e) {

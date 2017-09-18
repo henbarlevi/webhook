@@ -70,7 +70,8 @@ router.get('/gdrive/code', (req, res) => __awaiter(this, void 0, void 0, functio
             }
         };
         let userRep = new userRep_1.UserRepository();
-        yield userRep.updateOrCreate(user);
+        yield userRep.updateOrCreateUserGoogleCreds(email, token);
+        yield userRep.updateUserGdriveWebhook(email, subscription);
     }
     catch (e) {
         Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
@@ -122,7 +123,7 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
         Logger_1.Logger.d(TAG, '** Proccessing Activities **');
         let userRep = new userRep_1.UserRepository();
         try {
-            let user = yield userRep.getUserByChannelId(channelId);
+            let user = yield userRep.getUserByGdriveChannelId(channelId);
             if (!user) {
                 throw Error('Got notification for user that doesnt exist in the DB');
             }
@@ -142,8 +143,8 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
             Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>>' + e);
             Logger_1.Logger.d(TAG, 'couldnt get changes of user so - shutting down the notifiaciton channel' + e);
             try {
-                let user = yield userRep.getUserByChannelId(channelId);
-                yield gdrive_1.GdriveService.stopNotifications(channelId, user.gdrive.tokens.access_token, resourceId);
+                let user = yield userRep.getUserByGdriveChannelId(channelId);
+                yield gdrive_1.GdriveService.stopNotifications(channelId, user.google.tokens.access_token, resourceId);
             }
             catch (e) {
                 Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>> Couldnt shut down the channel - user credentials are OLD OR not exist/request Failed ' + e);

@@ -1,15 +1,20 @@
 import { User } from '../schemas/user';
 import { Logger } from '../../utils/Logger';
 
+// ===== models
+import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse } from '../../models';
 const TAG: string = 'User Repository';
 export class UserRepository {
-    updateOrCreate(user: iUserDB) {
+    //partial update -https://stackoverflow.com/questions/11655270/mongoose-and-partial-select-update
+    updateOrCreateUserGoogleCreds(email: string, tokens: iGoogleCreds) {
         return new Promise((res, rej) => {
-            Logger.d(TAG, '**updating/creating user** ');
-            Logger.d(TAG, '**updating to >** ');
-            console.log(user);
+
+
+            /*find user by email - if exist - update it/else create it*/
+            Logger.d(TAG, '**updating user Google Creds/creating user** ');
+
             let options = { upsert: true, new: true, setDefaultsOnInsert: false }; //options that make create new doc record if it doesnt find one https://stackoverflow.com/questions/33305623/mongoose-create-document-if-not-exists-otherwise-update-return-document-in 
-            User.findOneAndUpdate({ 'gdrive.email': user.gdrive.email }, user, options, (err, userDoc) => {
+            User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.tokens": tokens } }, options, (err, userDoc) => {
                 if (err) {
                     Logger.d(TAG, 'DB ERROR! ', 'red');
 
@@ -20,30 +25,31 @@ export class UserRepository {
 
                 res(userDoc);
             })
-            // let options = { upsert: true, new: true, setDefaultsOnInsert: false }; //options that make create new doc record if it doesnt find one https://stackoverflow.com/questions/33305623/mongoose-create-document-if-not-exists-otherwise-update-return-document-in 
-            // User.findOne({ "gdrive.email": user.gdrive.email }, (err, userDoc) => {
-            //     if (err) {
-            //         return rej(err);
-            //     }
-            //     if (!userDoc) {
-            //         Logger.d(TAG,'** user doesnt exist , creating user','yellow');
-            //         User.create(user, (err, userDoc) => {
-            //             if (err) {
-            //                 return rej(err);
-            //             }
-            //             res(userDoc);
-            //         })
-            //     }
-
-            // })
-
         })
     }
-    getUserByChannelId(channelId: string): Promise<any> {
+    updateUserGdriveWebhook(email: string, webhook: iGdriveWebhook) {
         return new Promise((res, rej) => {
-            Logger.d(TAG, `**finding user By Channel ID > ${channelId}** `);
+            Logger.d(TAG, '**updating user Gdrive-Webhook Creds/creating user** ');
 
-            User.findOne({ 'gdrive.webhook.id': channelId }, (err, userDoc) => {
+            User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gdrive.webhook": webhook } }, (err, userDoc) => {
+
+                if (err) {
+                    Logger.d(TAG, 'DB ERROR! ', 'red');
+                    return rej(err);
+                }
+                Logger.d(TAG, 'user updated');
+                console.log(userDoc);
+
+                res(userDoc);
+            })
+        })
+
+    }
+    getUserByGdriveChannelId(channelId: string): Promise<any> {
+        return new Promise((res, rej) => {
+            Logger.d(TAG, `**finding user By Gdrive Webhook Channel ID > ${channelId}** `);
+
+            User.findOne({ 'google.gdrive.webhook.id': channelId }, (err, userDoc) => {
                 if (err) {
                     return rej(err);
                 }
@@ -63,41 +69,45 @@ export class UserRepository {
 }
 
 export interface iUserDB {
-    gdrive: {
-        email: string,
-        tokens: {
-            access_token: string,
-            id_token: string,
-            refresh_token?: string,
-            token_type: string,//"Bearer"
-            expiry_date: number
+    google: {
+        email: String,
+        tokens: iGoogleToken,
+        gdrive: {
+            webhook: iGdriveWebhook
         },
-        webhook: {
-            /**
-             * A UUID or similar unique string that identifies this channel.
-             */
-            id: string,
-            /**
-             * An opaque ID that identifies the resource being watched on this channel
-             */
-            resourceId: string,
-            /**
-             * A version-specific identifier for the watched resource.
-             */
-            resourceUri: string,
-            /**
-             * An arbitrary string delivered to the target address with each notification delivered over this channel.
-             * in our case it is the user email.
-             */
-            token: string,
-            /**
-             * Date and time of notification channel expiration, expressed as a Unix timestamp, in milliseconds.
-             */
-            expiration: number,
-            /**
-             * token that send to google server in order to tell it from which moment of time to get the user activities that happend
-            */
-            pageToken?: string
+        gmail: {
+            webhook: {}
         }
     }
 }
+/**webhook Creds that s */
+export interface iGdriveWebhook extends iGdriveWebSubResponse {
+    /**
+     * * token that send to google server in order to tell it from which moment of time to get the user activities that happend
+   */
+    pageToken?: string
+}
+
+    //================================ OLD =============
+    // updateOrCreate(user: iUserDB) {
+    //     return new Promise((res, rej) => {
+
+
+            // /*find user by email - if exist - update it/else create it*/
+            // Logger.d(TAG, '**updating/creating user** ');
+            // Logger.d(TAG, '**updating to >** ');
+            // console.log(user);
+            // let options = { upsert: true, new: true, setDefaultsOnInsert: false }; //options that make create new doc record if it doesnt find one https://stackoverflow.com/questions/33305623/mongoose-create-document-if-not-exists-otherwise-update-return-document-in 
+            // User.findOneAndUpdate({ 'gdrive.email': user.google.email }, user, options, (err, userDoc) => {
+            //     if (err) {
+            //         Logger.d(TAG, 'DB ERROR! ', 'red');
+
+            //         return rej(err);
+            //     }
+            //     Logger.d(TAG, 'user created/updated');
+            //     console.log(userDoc);
+
+            //     res(userDoc);
+            // })
+    //     })
+    // }

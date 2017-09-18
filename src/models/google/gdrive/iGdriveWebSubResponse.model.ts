@@ -2,7 +2,7 @@
 /**
  * res: https://developers.google.com/drive/v2/reference/changes/watch
  */
-export interface iWebSubResponse {
+export interface iGdriveWebSubResponse {
     /**
      * A UUID or similar unique string that identifies this channel.
      * in our case it is the user email.
