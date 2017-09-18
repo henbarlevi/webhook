@@ -146,7 +146,7 @@ router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, fun
                 yield gdrive_1.GdriveService.stopNotifications(channelId, user.gdrive.tokens.access_token, resourceId);
             }
             catch (e) {
-                Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>> Couldnt shut down the channel - user credentials not found i db/request Failed' + e);
+                Logger_1.Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>> Couldnt shut down the channel - user credentials are OLD OR not exist/request Failed ' + e);
             }
         }
     }

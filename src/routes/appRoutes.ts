@@ -154,7 +154,7 @@ router.post('/webhook/gdrive', async (req: express.Request, res) => {
                 
             }
             catch (e) {
-                Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>> Couldnt shut down the channel - user credentials not found i db/request Failed' + e);
+                Logger.d(TAG, 'ERR>>>>>>>>>>>>>>>>> Couldnt shut down the channel - user credentials are OLD OR not exist/request Failed ' + e);
 
             }
 
