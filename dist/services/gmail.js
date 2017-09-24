@@ -98,7 +98,7 @@ class GmailService {
             const uniqueId = uuid(); //generate random string
             const req_body = {
                 topicName: "projects/webhooks-179808/topics/mytopic",
-                labelIds: ["INBOX"],
+                labelIds: [],
             };
             request.post(`https://www.googleapis.com/gmail/v1/users/${user_email}/watch`, {
                 json: true,

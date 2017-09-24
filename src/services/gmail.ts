@@ -110,7 +110,9 @@ export class GmailService {
             const uniqueId: string = uuid(); //generate random string
             const req_body = {
                 topicName: "projects/webhooks-179808/topics/mytopic", //as registered when creating the topic https://console.cloud.google.com/cloudpubsub
-                labelIds: ["INBOX"],
+                labelIds: [
+                //    "INBOX"
+                ],
             }
             request.post(`https://www.googleapis.com/gmail/v1/users/${user_email}/watch`, {
                 json: true,
