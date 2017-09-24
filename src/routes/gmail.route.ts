@@ -33,7 +33,7 @@ router.get('/gdrive/code', async (req: express.Request, res) => {
 
 })
 router.get('/webhook',async (req: express.Request, res) =>{
-    
+    res.status(200).send('got the message');
 })
 
 export default router;
