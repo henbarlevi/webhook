@@ -4,8 +4,7 @@ import * as Rx from 'rxjs';
 import * as path from 'path';
 import { GdriveService } from '../services/gdrive';
 // ===== Models =====
-import { iGoogleToken } from '../models/iGoogleToken.model';
-import { iWebSubResponse } from '../models/iWebSubResponse.model';
+import { iGoogleToken ,iGdriveWebSubResponse} from '../models';
 // ===== DB =====
 import { UserRepository, iUserDB } from '../db/repository/userRep'
 // ===== UTILS =====
@@ -14,10 +13,8 @@ const TAG: string = 'AppRoutes';
 const router: express.Router = express.Router();
 
 
-// import { user, iUserDB } from '../db/repository/fakeUser'; //just for example , instead of using a DB we just saving user details here
-// let dbUser = user;
 router.get('/', (req: express.Request, res: express.Response) => {
-    res.send('welcome to server api');
+    res.send('welcome to server api /');
 })
 /**1.Oauth
  * a.redirect to google consent page */
@@ -45,7 +42,7 @@ router.get('/gdrive/code', async (req: express.Request, res) => {
 
         //2. Webhook - registering to webhook in order to get user Gdrive activities
         Logger.d(TAG, '========== 2. Webhook - registering to webhook in order to get user Gdrive activities ==========' + code, 'green');
-        let subscription: iWebSubResponse = await GdriveService.registerWebhook(token.access_token, email);
+        let subscription: iGdriveWebSubResponse = await GdriveService.registerWebhook(token.access_token, email);
         Logger.d(TAG, 'server is hooked to user ' + email + 'Activities', 'green');
 
         //*saving to db
@@ -84,7 +81,7 @@ router.get('/google6415f016f1a68134.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/google6415f016f1a68134.html'));
 })
 
-/**3.hook to user activities - google will inform to this route all the activities of the user 
+/**3.hook to user activities - google will inform to this route all the activities of the user gdrive
  * https://developers.google.com/drive/v2/web/push#stopping-notifications
 */
 router.post('/webhook/gdrive', async (req: express.Request, res) => {

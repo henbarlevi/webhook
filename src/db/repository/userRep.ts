@@ -6,12 +6,12 @@ import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse } from '../../models'
 const TAG: string = 'User Repository';
 export class UserRepository {
     //partial update -https://stackoverflow.com/questions/11655270/mongoose-and-partial-select-update
-    updateOrCreateUserGoogleCreds(email: string, tokens: iGoogleCreds) {
+    updateOrCreateUserGoogleCreds(email: string, tokens: iGoogleToken) {
         return new Promise((res, rej) => {
 
 
             /*find user by email - if exist - update it/else create it*/
-            Logger.d(TAG, '**updating user Google Creds/creating user** ');
+            Logger.d(TAG, '**updating user Google token Creds/creating user** ');
 
             let options = { upsert: true, new: true, setDefaultsOnInsert: false }; //options that make create new doc record if it doesnt find one https://stackoverflow.com/questions/33305623/mongoose-create-document-if-not-exists-otherwise-update-return-document-in 
             User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.tokens": tokens } }, options, (err, userDoc) => {

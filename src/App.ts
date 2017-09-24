@@ -5,7 +5,9 @@ import * as bodyParser from 'body-parser';
 import * as mongoose from 'mongoose';
 import * as config from 'config';
 
-import appRoutes from './routes/appRoutes';
+import GdriveRoutes from './routes/gdrive.route';
+import GmailRoutes from './routes/gmail.route';
+
 import { Logger } from './utils/logger'
 const TAG = 'App';
 const ENV: string = process.env.NODE_ENV || 'local';
@@ -48,7 +50,9 @@ class App {
     /* This is just to get up and running, and to make sure what we've got is
      * working so far. This function will change when we start to add more
      * API endpoints */
-    this.express.use('/', appRoutes);
+    this.express.use('/', GdriveRoutes);
+    this.express.use('/gmail', GmailRoutes);
+    
   }
 
 

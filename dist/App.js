@@ -6,7 +6,8 @@ const logger = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const config = require("config");
-const appRoutes_1 = require("./routes/appRoutes");
+const gdrive_route_1 = require("./routes/gdrive.route");
+const gmail_route_1 = require("./routes/gmail.route");
 const logger_1 = require("./utils/logger");
 const TAG = 'App';
 const ENV = process.env.NODE_ENV || 'local';
@@ -38,7 +39,8 @@ class App {
         /* This is just to get up and running, and to make sure what we've got is
          * working so far. This function will change when we start to add more
          * API endpoints */
-        this.express.use('/', appRoutes_1.default);
+        this.express.use('/', gdrive_route_1.default);
+        this.express.use('/gmail', gmail_route_1.default);
     }
 }
 exports.default = new App().express; //export instance of new app

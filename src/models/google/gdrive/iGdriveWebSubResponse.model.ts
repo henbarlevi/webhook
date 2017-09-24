@@ -1,6 +1,8 @@
 
 /**
  * res: https://developers.google.com/drive/v2/reference/changes/watch
+ * 
+ * Gdrive response for Webhook registeration
  */
 export interface iGdriveWebSubResponse {
     /**

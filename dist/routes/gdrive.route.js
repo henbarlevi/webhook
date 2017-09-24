@@ -18,7 +18,7 @@ const Logger_1 = require("../utils/Logger");
 const TAG = 'AppRoutes';
 const router = express.Router();
 router.get('/', (req, res) => {
-    res.send('welcome to server api');
+    res.send('welcome to server api /');
 });
 /**1.Oauth
  * a.redirect to google consent page */
@@ -80,7 +80,7 @@ by specifing a route that will return an html downloaded from google*/
 router.get('/google6415f016f1a68134.html', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/google6415f016f1a68134.html'));
 });
-/**3.hook to user activities - google will inform to this route all the activities of the user
+/**3.hook to user activities - google will inform to this route all the activities of the user gdrive
  * https://developers.google.com/drive/v2/web/push#stopping-notifications
 */
 router.post('/webhook/gdrive', (req, res) => __awaiter(this, void 0, void 0, function* () {

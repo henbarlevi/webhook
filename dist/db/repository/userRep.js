@@ -8,7 +8,7 @@ class UserRepository {
     updateOrCreateUserGoogleCreds(email, tokens) {
         return new Promise((res, rej) => {
             /*find user by email - if exist - update it/else create it*/
-            Logger_1.Logger.d(TAG, '**updating user Google Creds/creating user** ');
+            Logger_1.Logger.d(TAG, '**updating user Google token Creds/creating user** ');
             let options = { upsert: true, new: true, setDefaultsOnInsert: false }; //options that make create new doc record if it doesnt find one https://stackoverflow.com/questions/33305623/mongoose-create-document-if-not-exists-otherwise-update-return-document-in 
             user_1.User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.tokens": tokens } }, options, (err, userDoc) => {
                 if (err) {
