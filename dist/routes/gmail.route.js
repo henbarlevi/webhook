@@ -46,6 +46,9 @@ router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
     }
 }));
 router.get('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
+    Logger_1.Logger.d(TAG, req.body, 'cyan');
+    Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
     res.status(200).send('got the message');
 }));
 exports.default = router;
