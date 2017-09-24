@@ -6,3 +6,4 @@ export * from './google/gdrive/iFile.model';
 export * from './google/gdrive/iGdriveWebSubResponse.model';
 // ======= Gmail
 export * from './google/gmail/iGmailNotification.model'
+export * from './google/gmail/iGmailChangesResponse.model'

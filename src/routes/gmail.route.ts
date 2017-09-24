@@ -4,7 +4,7 @@ import * as Rx from 'rxjs';
 import * as path from 'path';
 import { GmailService } from '../services/gmail';
 // ===== Models =====
-import { iGoogleToken, iGmailNotification, iGmailNotificationData } from '../models';
+import { iGoogleToken, iGmailNotification, iGmailNotificationData,iGmailChangesResponse } from '../models';
 // ===== DB =====
 import { UserRepository, iUserDB } from '../db/repository/userRep'
 // ===== UTILS =====
@@ -64,8 +64,10 @@ router.post('/webhook', async (req: express.Request, res) => {
         let userRep = new UserRepository();
         let userDoc: iUserDB = await userRep.getUserByGoogleEmail(notificationData.emailAddress);
         let access_token :string = userDoc.google.tokens.access_token;
+        let historyId = (parseInt(notificationData.historyId) - 5).toString();
         if(userDoc.google.tokens.access_token){
-          let changesDetails =  await GmailService.getChanges(access_token,notificationData.emailAddress,notificationData.historyId);
+          let changesDetails: iGmailChangesResponse =  await GmailService.getChanges(access_token,notificationData.emailAddress,historyId);
+            //save the historyId in db (for the next notificaiton for this user in the future) -TODO:
         }
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');

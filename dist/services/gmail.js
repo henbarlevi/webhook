@@ -188,6 +188,8 @@ class GmailService {
                 else {
                     Logger_1.Logger.d(TAG, 'GET Gmail Changes Details  succeded', 'green');
                     Logger_1.Logger.d(TAG, JSON.stringify(changes), 'green');
+                    Logger_1.Logger.d(TAG, `GETTING MESSAGE DETAILS for each change >`, 'green');
+                    //changes.history.messages //TODO
                     if (changes.nextPageToken) {
                         Logger_1.Logger.d(TAG, '**Page Token exist in response -GETTING NEXT PAGE OF Gmail Changes Details ', 'green');
                         let nextChanges = yield this.getChanges(access_token, user_email, historyId, changes.nextPageToken);

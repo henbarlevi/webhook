@@ -8,10 +8,12 @@ http://mherman.org/blog/2016/11/05/developing-a-restful-api-with-node-and-typesc
 
 run project with npm run dev
 ...
+=========================================================================================================
+=========================================================================================================
 
-========================================================================
 this project show how to webhook with Gdrive, Gmail ,OneDrive and outlook.
 i used my personal account for google app registeration in the google console https://console.developers.google.com/apis
 
+NOTE - you will see alot of usage in the words changes/activities = which have the same meaning  (the activities that the user did in the account )
 //------------ for using Gmail Webhook ----------------
 use the pub/sub guide : https://cloud.google.com/pubsub/docs/quickstart-console

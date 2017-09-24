@@ -7,7 +7,7 @@ import * as uuid from 'uuid';
 //const googleAuth = require('google-auth-library'); //alternative SDK library for 'googleapis
 
 // === MODELS ===
-import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iChangesResponse } from '../models/';
+import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iGmailChangesResponse } from '../models/';
 
 
 // === UTILS ===
@@ -183,7 +183,7 @@ export class GmailService {
         });
     }
     /**https://developers.google.com/gmail/api/v1/reference/users/history/list */
-    static getChanges(access_token: string, user_email: string, historyId: string, pageToken?: string): Promise<string> {
+    static getChanges(access_token: string, user_email: string, historyId: string, pageToken?: string): Promise<iGmailChangesResponse> {
         return new Promise((resolve, reject) => {
             const exp_date: number = generateExpDate();
             Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS  === user_email : ' + user_email + ' access_Token :' + access_token + ' historyId :' + historyId + '***');
@@ -194,7 +194,7 @@ export class GmailService {
                     Authorization: 'Bearer ' + access_token
                 },
                 //body: req_body
-            }, async (err, res, changes: any) => {
+            }, async (err, res, changes: iGmailChangesResponse) => {
                 if (!res) {
                     Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
                     return reject();
@@ -211,6 +211,8 @@ export class GmailService {
                 else {
                     Logger.d(TAG, 'GET Gmail Changes Details  succeded', 'green');
                     Logger.d(TAG, JSON.stringify(changes), 'green');
+                    Logger.d(TAG, `GETTING MESSAGE DETAILS for each change >`, 'green');
+                    //changes.history.messages //TODO
                     if (changes.nextPageToken) {
                         Logger.d(TAG, '**Page Token exist in response -GETTING NEXT PAGE OF Gmail Changes Details ', 'green');
                         let nextChanges = await this.getChanges(access_token, user_email, historyId, changes.nextPageToken)
