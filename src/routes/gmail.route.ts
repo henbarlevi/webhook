@@ -4,7 +4,7 @@ import * as Rx from 'rxjs';
 import * as path from 'path';
 import { GmailService } from '../services/gmail';
 // ===== Models =====
-import { iGoogleToken, iGdriveWebSubResponse } from '../models';
+import { iGoogleToken, iGmailNotification, iGmailNotificationData } from '../models';
 // ===== DB =====
 import { UserRepository, iUserDB } from '../db/repository/userRep'
 // ===== UTILS =====
@@ -24,8 +24,8 @@ router.get('/auth', (req, res) => {
 })
 /*1.Oauth - b.exchange code with access token
     and get user email
-  2. Webhook - registering to webhook in order to get user Gdrive activities
-
+  2. Webhook - registering to webhook in order to get user Gdrive activities https://developers.google.com/gmail/api/guides/push
+  
 
   */
 router.get('/code', async (req: express.Request, res) => {
@@ -38,20 +38,40 @@ router.get('/code', async (req: express.Request, res) => {
         Logger.d(TAG, 'token >' + token, 'green');
         let email: string = await GmailService.getUserEmail(token.id_token);
         Logger.d(TAG, 'user email >' + email, 'gray');
+
         await GmailService.registerWebhook(token.access_token, email);
+        let userRep = new UserRepository();
+        await userRep.updateOrCreateUserGoogleCreds(email, token)
 
     }
     catch (e) {
         Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
     }
 })
+/**getting Gmail user Activities (push notifications) */
 router.post('/webhook', async (req: express.Request, res) => {
-    Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
-    Logger.d(TAG, JSON.stringify(req.body), 'cyan');
-    
-    Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
-    
-    res.status(200).send('got the message');
+    try {
+
+        Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
+        let notification: iGmailNotification = req.body;
+        Logger.d(TAG, JSON.stringify(req.body), 'cyan');
+        let notificationData: iGmailNotificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii')); // decrypt from base64
+        //get details about the pushed notification:
+        let userRep = new UserRepository();
+        let userDoc: iUserDB = await userRep.getUserByGoogleEmail(notificationData.emailAddress);
+        let access_token :string = userDoc.google.tokens.access_token;
+        if(userDoc.google.tokens.access_token){
+          let changesDetails =  await GmailService.getChanges(access_token,notificationData.emailAddress,notificationData.historyId);
+        }
+        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+
+    }
+    catch (e) {
+        Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
+    }
+    finally {
+        res.status(200).send('got the message');
+    }
 })
 
 export default router;

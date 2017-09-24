@@ -13,10 +13,12 @@ const TAG = 'App';
 const ENV = process.env.NODE_ENV || 'local';
 const envConfig = config.get(`${ENV}`);
 const connectionString = envConfig.connectionString || 'mongodb://localhost/mydb';
-logger_1.Logger.d(TAG, '=================== App Config =================== ');
+const BASE_URL = envConfig.base_url;
+logger_1.Logger.d(TAG, '=================== App Config =================== ', 'yellow');
 console.log('ENV >' + ENV);
+logger_1.Logger.d(TAG, 'Server BASE URL > ' + BASE_URL, 'yellow');
 console.log(envConfig);
-logger_1.Logger.d(TAG, '=================== / App Config =================== ');
+logger_1.Logger.d(TAG, '=================== / App Config =================== ', 'yellow');
 //const connectionString: string = process.env.DB_CONNECTION_STRING || 'mongodb://localhost/mydb';
 // Creates and configures an ExpressJS web server.
 class App {

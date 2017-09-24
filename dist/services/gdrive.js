@@ -23,10 +23,6 @@ const drive = google.drive({
     auth: oauth2Client
 });
 //================ / google api lib initalization ===================:
-Logger_1.Logger.d(TAG, '================ Google drive Config ===============', 'yellow');
-Logger_1.Logger.d(TAG, JSON.stringify(creds), 'yellow');
-Logger_1.Logger.d(TAG, 'Server BASE URL > ' + BASE_URL, 'yellow');
-Logger_1.Logger.d(TAG, '================ / Google drive Config ===============', 'yellow');
 //const REFRESH_TIME_GAP: number = 10 * 60 * 1000;
 //const auth = new googleAuth();
 //const oauth2Client = new auth.OAuth2(creds.client_id, creds.client_secret, creds.redirect_uri);
@@ -139,7 +135,9 @@ class GdriveService {
             });
         });
     }
-    /**https://developers.google.com/drive/v2/reference/changes/list */
+    /**https://developers.google.com/drive/v2/reference/changes/list
+     * Get Changes Details
+    */
     static getChanges(channelId, access_token, pageToken) {
         return new Promise((resolve, reject) => {
             Logger_1.Logger.d(TAG, ` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`);

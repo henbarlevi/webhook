@@ -65,7 +65,26 @@ export class UserRepository {
             })
         });
     }
+    getUserByGoogleEmail(email: string): Promise<any> {
+        return new Promise((res, rej) => {
+            Logger.d(TAG, `**finding user By Google Email > ${email}** `);
 
+            User.findOne({ 'google.email': email }, (err, userDoc) => {
+                if (err) {
+                    return rej(err);
+                }
+                if (!userDoc) {
+                    Logger.d(TAG, 'Didnt Find user! ');
+                    return res(userDoc)
+                }
+                Logger.d(TAG, 'user Found : ');
+                console.log(userDoc);
+
+                res(userDoc);
+
+            })
+        });
+    }
 }
 
 export interface iUserDB {

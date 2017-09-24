@@ -33,11 +33,7 @@ const drive = google.drive({
     auth: oauth2Client
 });
 //================ / google api lib initalization ===================:
-Logger.d(TAG, '================ Google drive Config ===============', 'yellow');
-Logger.d(TAG, JSON.stringify(creds), 'yellow');
-Logger.d(TAG, 'Server BASE URL > ' + BASE_URL, 'yellow');
 
-Logger.d(TAG, '================ / Google drive Config ===============', 'yellow');
 
 //const REFRESH_TIME_GAP: number = 10 * 60 * 1000;
 
@@ -95,7 +91,7 @@ export class GdriveService {
     /**hook to user activities - get user push notifications 
      * https://developers.google.com/drive/v2/reference/changes/watch
     */
-    static registerWebhook(access_token: string, user_email: string): Promise<iWebSubResponse> {
+    static registerWebhook(access_token: string, user_email: string): Promise<iGdriveWebSubResponse> {
         return new Promise((resolve, reject) => {
 
             const exp_date: number = generateExpDate();
@@ -115,7 +111,7 @@ export class GdriveService {
                     Authorization: 'Bearer ' + access_token
                 },
                 body: req_body
-            }, (err, res, subscription: iWebSubResponse) => {
+            }, (err, res, subscription: iGdriveWebSubResponse) => {
                 if (err) {
                     Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
                     return reject(err);
@@ -162,7 +158,9 @@ export class GdriveService {
             });
         });
     }
-    /**https://developers.google.com/drive/v2/reference/changes/list */
+    /**https://developers.google.com/drive/v2/reference/changes/list 
+     * Get Changes Details
+    */
     static getChanges(channelId: string, access_token: string, pageToken: string): Promise<string> {
         return new Promise((resolve, reject) => {
             Logger.d(TAG, ` ** Getting user Changes , channelID ${channelId} , access Token : ${access_token}, page Token : ${pageToken}`)

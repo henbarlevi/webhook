@@ -52,6 +52,23 @@ class UserRepository {
             });
         });
     }
+    getUserByGoogleEmail(email) {
+        return new Promise((res, rej) => {
+            Logger_1.Logger.d(TAG, `**finding user By Google Email > ${email}** `);
+            user_1.User.findOne({ 'google.email': email }, (err, userDoc) => {
+                if (err) {
+                    return rej(err);
+                }
+                if (!userDoc) {
+                    Logger_1.Logger.d(TAG, 'Didnt Find user! ');
+                    return res(userDoc);
+                }
+                Logger_1.Logger.d(TAG, 'user Found : ');
+                console.log(userDoc);
+                res(userDoc);
+            });
+        });
+    }
 }
 exports.UserRepository = UserRepository;
 //================================ OLD =============
