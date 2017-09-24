@@ -12,7 +12,7 @@ import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iChangesResponse } f
 
 // === UTILS ===
 import { Logger } from '../utils/Logger';
-const TAG: string = 'Gdrive';
+const TAG: string = 'GMAIL';
 
 //import { user as UserDb } from '../db/user';
 const ENV: string = process.env.NODE_ENV || 'local';
@@ -135,7 +135,7 @@ export class GmailService {
                     Logger.d(TAG, 'Webhook Gmail Registeration succeded', 'green');
                     Logger.d(TAG, JSON.stringify(subscription), 'green');
                     resolve(subscription);
-                   
+
                 }
             });
         });
@@ -183,18 +183,18 @@ export class GmailService {
         });
     }
     /**https://developers.google.com/gmail/api/v1/reference/users/history/list */
-    static getChanges(access_token: string, user_email:string,historyId:string): Promise<string> {
+    static getChanges(access_token: string, user_email: string, historyId: string, pageToken?: string): Promise<string> {
         return new Promise((resolve, reject) => {
             const exp_date: number = generateExpDate();
             Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS  === user_email : ' + user_email + ' access_Token :' + access_token + ' historyId :' + historyId + '***');
 
-            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages?`+'startHistoryId='+historyId, {
+            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/history?` + 'startHistoryId=' + historyId, {
                 json: true,
                 headers: {
                     Authorization: 'Bearer ' + access_token
                 },
                 //body: req_body
-            }, (err, res, changes: any) => {
+            }, async (err, res, changes: any) => {
                 if (!res) {
                     Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
                     return reject();
@@ -209,10 +209,17 @@ export class GmailService {
                     reject(res.statusCode);
                 }
                 else {
-                    Logger.d(TAG, 'GET Changes Details  succeded', 'green');
+                    Logger.d(TAG, 'GET Gmail Changes Details  succeded', 'green');
                     Logger.d(TAG, JSON.stringify(changes), 'green');
-                    
-                    Logger.d(TAG, changes, 'green');
+                    if (changes.nextPageToken) {
+                        Logger.d(TAG, '**Page Token exist in response -GETTING NEXT PAGE OF Gmail Changes Details ', 'green');
+                        let nextChanges = await this.getChanges(access_token, user_email, historyId, changes.nextPageToken)
+                        resolve(changes);
+                    } else {
+
+                        resolve(changes);
+                    }
+                    // Logger.d(TAG, changes, 'green');
                 }
             });
         });

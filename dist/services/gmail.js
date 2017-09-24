@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const config = require("config");
 const google = require("googleapis");
@@ -8,7 +16,7 @@ const request = require("request");
 const uuid = require("uuid");
 // === UTILS ===
 const Logger_1 = require("../utils/Logger");
-const TAG = 'Gdrive';
+const TAG = 'GMAIL';
 //import { user as UserDb } from '../db/user';
 const ENV = process.env.NODE_ENV || 'local';
 const envConfig = config.get(ENV);
@@ -155,16 +163,16 @@ class GmailService {
         });
     }
     /**https://developers.google.com/gmail/api/v1/reference/users/history/list */
-    static getChanges(access_token, user_email, historyId) {
+    static getChanges(access_token, user_email, historyId, pageToken) {
         return new Promise((resolve, reject) => {
             const exp_date = generateExpDate();
             Logger_1.Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS  === user_email : ' + user_email + ' access_Token :' + access_token + ' historyId :' + historyId + '***');
-            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages?` + 'startHistoryId=' + historyId, {
+            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/history?` + 'startHistoryId=' + historyId, {
                 json: true,
                 headers: {
                     Authorization: 'Bearer ' + access_token
                 },
-            }, (err, res, changes) => {
+            }, (err, res, changes) => __awaiter(this, void 0, void 0, function* () {
                 if (!res) {
                     Logger_1.Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
                     return reject();
@@ -178,11 +186,19 @@ class GmailService {
                     reject(res.statusCode);
                 }
                 else {
-                    Logger_1.Logger.d(TAG, 'GET Changes Details  succeded', 'green');
+                    Logger_1.Logger.d(TAG, 'GET Gmail Changes Details  succeded', 'green');
                     Logger_1.Logger.d(TAG, JSON.stringify(changes), 'green');
-                    Logger_1.Logger.d(TAG, changes, 'green');
+                    if (changes.nextPageToken) {
+                        Logger_1.Logger.d(TAG, '**Page Token exist in response -GETTING NEXT PAGE OF Gmail Changes Details ', 'green');
+                        let nextChanges = yield this.getChanges(access_token, user_email, historyId, changes.nextPageToken);
+                        resolve(changes);
+                    }
+                    else {
+                        resolve(changes);
+                    }
+                    // Logger.d(TAG, changes, 'green');
                 }
-            });
+            }));
         });
     }
     /*if we wont to shut down a notification channel
