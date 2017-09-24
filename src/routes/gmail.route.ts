@@ -38,11 +38,12 @@ router.get('/code', async (req: express.Request, res) => {
         Logger.d(TAG, 'token >' + token, 'green');
         let email: string = await GmailService.getUserEmail(token.id_token);
         Logger.d(TAG, 'user email >' + email, 'gray');
-
+        Logger.d(TAG, '========== 2. Webhook - registering to webhook in order to get user Gmail activities ==========' + code, 'green');
+        
         await GmailService.registerWebhook(token.access_token, email);
         let userRep = new UserRepository();
         await userRep.updateOrCreateUserGoogleCreds(email, token)
-
+        res.status(200).send('Server hooked to your gmail Activities');
     }
     catch (e) {
         Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
@@ -53,6 +54,9 @@ router.post('/webhook', async (req: express.Request, res) => {
     try {
 
         Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
+        Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
+        Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
+        
         let notification: iGmailNotification = req.body;
         Logger.d(TAG, JSON.stringify(req.body), 'cyan');
         let notificationData: iGmailNotificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii')); // decrypt from base64
@@ -64,6 +68,9 @@ router.post('/webhook', async (req: express.Request, res) => {
           let changesDetails =  await GmailService.getChanges(access_token,notificationData.emailAddress,notificationData.historyId);
         }
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+        
 
     }
     catch (e) {

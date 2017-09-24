@@ -41,6 +41,7 @@ router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
         Logger_1.Logger.d(TAG, 'token >' + token, 'green');
         let email = yield gmail_1.GmailService.getUserEmail(token.id_token);
         Logger_1.Logger.d(TAG, 'user email >' + email, 'gray');
+        Logger_1.Logger.d(TAG, '========== 2. Webhook - registering to webhook in order to get user Gmail activities ==========' + code, 'green');
         yield gmail_1.GmailService.registerWebhook(token.access_token, email);
         let userRep = new userRep_1.UserRepository();
         yield userRep.updateOrCreateUserGoogleCreds(email, token);
@@ -53,6 +54,8 @@ router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
 router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* () {
     try {
         Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
+        Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
+        Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
         let notification = req.body;
         Logger_1.Logger.d(TAG, JSON.stringify(req.body), 'cyan');
         let notificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii')); // decrypt from base64
@@ -63,6 +66,8 @@ router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* 
         if (userDoc.google.tokens.access_token) {
             let changesDetails = yield gmail_1.GmailService.getChanges(access_token, notificationData.emailAddress, notificationData.historyId);
         }
+        Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+        Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
     }
     catch (e) {
