@@ -45,6 +45,7 @@ router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
         yield gmail_1.GmailService.registerWebhook(token.access_token, email);
         let userRep = new userRep_1.UserRepository();
         yield userRep.updateOrCreateUserGoogleCreds(email, token);
+        res.status(200).send('Server hooked to your gmail Activities');
     }
     catch (e) {
         Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');

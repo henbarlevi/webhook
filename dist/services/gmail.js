@@ -112,17 +112,8 @@ class GmailService {
                 }
                 else {
                     Logger_1.Logger.d(TAG, 'Webhook Gmail Registeration succeded', 'green');
-                    Logger_1.Logger.d(TAG, subscription, 'green');
-                    // if (subscription.id && subscription.expiration) {
-                    //     Logger.d(TAG, 'Webhook Registeration succeded', 'green');
-                    //     Logger.d(TAG, '============== Webhook Registered Details ============', 'green');
-                    //     Logger.d(TAG, 'channel id :' + subscription.id, 'gray');
-                    //     Logger.d(TAG, 'resourceId :' + subscription.resourceId, 'gray');
-                    //     Logger.d(TAG, 'resourceUri :' + subscription.resourceUri, 'gray');
-                    //     Logger.d(TAG, 'the user :' + subscription.token, 'gray'); //"hen@probot.ai"
-                    //     Logger.d(TAG, '============== / Webhook Registered Details ============', 'green');
-                    //     resolve(subscription);
-                    // }
+                    Logger_1.Logger.d(TAG, JSON.stringify(subscription), 'green');
+                    resolve(subscription);
                 }
             });
         });
