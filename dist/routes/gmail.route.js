@@ -45,7 +45,7 @@ router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
         Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
     }
 }));
-router.get('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* () {
+router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* () {
     Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
     Logger_1.Logger.d(TAG, req.body, 'cyan');
     Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');

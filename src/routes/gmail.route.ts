@@ -45,7 +45,7 @@ router.get('/code', async (req: express.Request, res) => {
         Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
     }
 })
-router.get('/webhook', async (req: express.Request, res) => {
+router.post('/webhook', async (req: express.Request, res) => {
     Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
     Logger.d(TAG, req.body, 'cyan');
     
