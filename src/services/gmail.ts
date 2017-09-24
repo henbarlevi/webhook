@@ -26,7 +26,7 @@ const OAuth2 = google.auth.OAuth2;
 const oauth2Client = new OAuth2(
     creds.client_id,
     creds.client_secret,
-    creds.redirect_url
+    creds.redirect_url_gmail
 );
 const drive = google.drive({
     version: 'v2',
@@ -44,14 +44,14 @@ Logger.d(TAG, '================ / Google drive Config ===============', 'yellow'
 
 //const auth = new googleAuth();
 //const oauth2Client = new auth.OAuth2(creds.client_id, creds.client_secret, creds.redirect_uri);
-export class GoogleService {
+export class GmailService {
     /**return the google authentication page url for the app */
     static authPageUrl(): string {
 
         const url: string = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             response_type: 'code',
-            scope: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
+            scope: ['https://mail.google.com/', 'https://www.googleapis.com/auth/userinfo.email']//['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
             //prompt: 'consent'
         });
         Logger.d(TAG, 'url generated >' + url);
@@ -92,13 +92,58 @@ export class GoogleService {
                 });
         });
     }
+
     /**hook to user activities - get user push notifications 
-     * https://developers.google.com/drive/v2/reference/changes/watch
-    */
-    static registerWebhook(access_token: string, user_email: string): Promise<iWebSubResponse> {
+   * https://developers.google.com/drive/v2/reference/changes/watch
+  */
+    static registerWebhook(access_token: string, user_email: string): Promise<any> {
         return new Promise((resolve, reject) => {
+            
+            const exp_date: number = generateExpDate();
+            Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GMAIL  === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + 'to address : ' + `${BASE_URL}/webhook/gdrive` + '***');
+            // this uniqueId  
+            const uniqueId: string = uuid(); //generate random string
+            const req_body = {
+                topicName: "projects/webhooks-179808/topics/mytopic", //as registered when creating the topic https://console.cloud.google.com/cloudpubsub
+                labelIds: ["INBOX"],
+              }
+            request.post(`https://www.googleapis.com/gmail/v1/users/${user_email}/watch`, {
+                json: true,
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                body: req_body
+            }, (err, res, subscription: any) => {
+                if(!res){
+                    Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
+                    return reject();
+                }
+                if (err) {
+                    Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
+                    return reject(err);
+                }
+                
+                if (res.statusCode != 200) {
+                    reject(JSON.stringify(subscription));
+                }
+                else {
+                         Logger.d(TAG, 'Webhook Gmail Registeration succeded', 'green');
+                         Logger.d(TAG,subscription, 'green');
+                         
+                    // if (subscription.id && subscription.expiration) {
+                    //     Logger.d(TAG, 'Webhook Registeration succeded', 'green');
+                    //     Logger.d(TAG, '============== Webhook Registered Details ============', 'green');
+                    //     Logger.d(TAG, 'channel id :' + subscription.id, 'gray');
+                    //     Logger.d(TAG, 'resourceId :' + subscription.resourceId, 'gray');
+                    //     Logger.d(TAG, 'resourceUri :' + subscription.resourceUri, 'gray');
+                    //     Logger.d(TAG, 'the user :' + subscription.token, 'gray'); //"hen@probot.ai"
 
+                    //     Logger.d(TAG, '============== / Webhook Registered Details ============', 'green');
 
+                    //     resolve(subscription);
+                    // }
+                }
+            });
         });
     }
     static getStartPageToken(access_token: string): Promise<string> {

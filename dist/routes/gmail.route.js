@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
-const gdrive_1 = require("../services/gdrive");
+const gmail_1 = require("../services/gmail");
+// ===== UTILS =====
+const Logger_1 = require("../utils/Logger");
 const TAG = 'AppRoutes';
 const router = express.Router();
 router.get('/', (req, res) => {
@@ -18,19 +20,33 @@ router.get('/', (req, res) => {
 /**1.Oauth
  * a.redirect to google consent page */
 router.get('/auth', (req, res) => {
-    let url = gdrive_1.GdriveService.authPageUrl();
+    let url = gmail_1.GmailService.authPageUrl();
     res.redirect(url);
 });
 /*1.Oauth - b.exchange code with access token
     and get user email
   2. Webhook - registering to webhook in order to get user Gdrive activities
-  NOTE - IN google You need to verify domain ownership (in the console.developers.google.com ) to allow webhook
-  NOTE - local server cannot register to webhook
+
 
   */
-router.get('/gdrive/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
+router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        let code = req.query.code;
+        //1. Oauth - b.exchange code with access token and get user email
+        Logger_1.Logger.d(TAG, '========== 1. b.exchange code with access token and get email ==========' + code, 'green');
+        Logger_1.Logger.d(TAG, 'code >' + code, 'gray');
+        let token = yield gmail_1.GmailService.getToken(code);
+        Logger_1.Logger.d(TAG, 'token >' + token, 'green');
+        let email = yield gmail_1.GmailService.getUserEmail(token.id_token);
+        Logger_1.Logger.d(TAG, 'user email >' + email, 'gray');
+        yield gmail_1.GmailService.registerWebhook(token.access_token, email);
+    }
+    catch (e) {
+        Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
+    }
 }));
 router.get('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    res.status(200).send('got the message');
 }));
 exports.default = router;
 //-------------------------------------SNIPPETS-------------------------
