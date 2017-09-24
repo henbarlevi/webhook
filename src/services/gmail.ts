@@ -186,7 +186,7 @@ export class GmailService {
     static getChanges(access_token: string, user_email:string,historyId:string): Promise<string> {
         return new Promise((resolve, reject) => {
             const exp_date: number = generateExpDate();
-            Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS  === user_email : ' + user_email + ' access_Token :' + access_token + '***');
+            Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS  === user_email : ' + user_email + ' access_Token :' + access_token + ' historyId :' + historyId + '***');
 
             request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages?`+'startHistoryId='+historyId, {
                 json: true,
