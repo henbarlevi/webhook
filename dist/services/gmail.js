@@ -153,38 +153,24 @@ class GmailService {
             });
         });
     }
-    /**https://developers.google.com/gmail/api/v1/reference/users/messages/attachments/get */
-    static getMessageAttachments(access_token, user_email, message_id, attachment_id) {
-        //  GET https://www.googleapis.com/gmail/v1/users/userId/messages/messageId/attachments/id
-        return new Promise((resolve, reject) => {
-            Logger_1.Logger.d(TAG, '*** GETTING ATTACHMENT :' + attachment_id + ' OF MESSAGE :' + message_id + '   ***');
-            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages/${message_id}/attachments/${attachment_id}`, {
-                json: true,
-                headers: {
-                    Authorization: 'Bearer ' + access_token
-                },
-            }, (err, res, attachmentData) => __awaiter(this, void 0, void 0, function* () {
-                if (!res) {
-                    Logger_1.Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
-                    return reject();
-                }
-                if (err) {
-                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
-                    return reject(err);
-                }
-                if (res.statusCode != 200) {
-                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
-                    reject(res.statusCode);
-                }
-                else {
-                    Logger_1.Logger.d(TAG, 'Attachment DATA >' + attachmentData.data);
-                }
-            }));
-        });
-    }
     static getStartPageToken(access_token) {
         return new Promise((resolve, reject) => {
         });
+    }
+    static handleNotification(access_token, user_email, historyId) {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+            let changes;
+            while (!changes || changes.nextPageToken) {
+                changes = yield this.getChanges(access_token, user_email, historyId);
+                changes.history ?
+                    changes.history.forEach(historyFregment => {
+                        historyFregment.messages.forEach(message => {
+                            this.getMessageAttachments(access_token, user_email, message.id);
+                        });
+                    }) : Logger_1.Logger.d(TAG, 'there are no more info for that history List');
+            }
+            resolve(changes);
+        }));
     }
     /**https://developers.google.com/gmail/api/v1/reference/users/history/list */
     static getChanges(access_token, user_email, historyId, pageToken) {
@@ -214,18 +200,18 @@ class GmailService {
                 }
                 else {
                     Logger_1.Logger.d(TAG, 'GET Gmail Changes Details  succeded', 'green');
-                    Logger_1.Logger.d(TAG, JSON.stringify(changes), 'green');
-                    Logger_1.Logger.d(TAG, `GETTING MESSAGE DETAILS for each change >`, 'green');
-                    //changes.history.messages //TODO
-                    if (changes.nextPageToken) {
-                        Logger_1.Logger.d(TAG, '**Page Token exist in response -GETTING NEXT PAGE OF Gmail Changes Details ', 'green');
-                        let nextChanges = yield this.getChanges(access_token, user_email, historyId, changes.nextPageToken);
-                        resolve(changes);
-                    }
-                    else {
-                        resolve(changes);
-                    }
-                    // Logger.d(TAG, changes, 'green');
+                    resolve(changes);
+                    // Logger.d(TAG, JSON.stringify(changes), 'green');
+                    // Logger.d(TAG, `GETTING MESSAGE DETAILS for each change >`, 'green');
+                    // //changes.history.messages //TODO
+                    // if (changes.nextPageToken) {
+                    //     Logger.d(TAG, '**Page Token exist in response -GETTING NEXT PAGE OF Gmail Changes Details ', 'green');
+                    //     let nextChanges = await this.getChanges(access_token, user_email, historyId, changes.nextPageToken)
+                    //     resolve(changes);
+                    // } else {
+                    //     resolve(changes);
+                    // }
+                    // // Logger.d(TAG, changes, 'green');
                 }
             }));
         });
@@ -234,6 +220,91 @@ class GmailService {
      https://developers.google.com/drive/v2/web/push#stopping-notifications */
     static stopNotifications(channelId, access_token, resourceId) {
         return new Promise((resolve, reject) => {
+        });
+    }
+    static getMessageAttachments(access_token, user_email, message_id) {
+        return new Promise((resovle, reject) => __awaiter(this, void 0, void 0, function* () {
+            Logger_1.Logger.d(TAG, `****** Checking if Message : ${message_id} Has Attachments   ******`);
+            let gmailMessage = yield this.getMessage(access_token, user_email, message_id);
+            let attachments = this.checkMessageForAttachments(gmailMessage);
+            Logger_1.Logger.d(TAG, `==============  FOUND ATTACHMENTS  ==============`);
+            console.log(attachments);
+            console.log(JSON.stringify(attachments));
+            Logger_1.Logger.d(TAG, `==============/  FOUND ATTACHMENTS  ==============`);
+        }));
+    }
+    static checkMessageForAttachments(gmailMessage) {
+        return this.searchForAttachmentsInPayload(gmailMessage.payload);
+    }
+    static searchForAttachmentsInPayload(payload) {
+        if (payload.filename != '') {
+            return [payload];
+        }
+        if (!payload.parts) {
+            return [];
+        }
+        let payloadsWithAttachments = [];
+        payload.parts.forEach((part) => {
+            payloadsWithAttachments.concat(this.searchForAttachmentsInPayload(part));
+        });
+        return payloadsWithAttachments;
+    }
+    static getMessage(access_token, user_email, message_id) {
+        //https://www.googleapis.com/gmail/v1/users/userId/messages/id
+        return new Promise((resolve, reject) => {
+            Logger_1.Logger.d(TAG, `*** GETTING Message : ${message_id} Details   ***`);
+            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages/${message_id}`, {
+                json: true,
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+            }, (err, res, message) => __awaiter(this, void 0, void 0, function* () {
+                if (!res) {
+                    Logger_1.Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
+                    return reject();
+                }
+                if (err) {
+                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
+                    return reject(err);
+                }
+                if (res.statusCode != 200) {
+                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
+                    reject(res.statusCode);
+                }
+                else {
+                    Logger_1.Logger.d(TAG, 'got message info ');
+                    resolve(message);
+                }
+            }));
+        });
+    }
+    /**https://developers.google.com/gmail/api/v1/reference/users/messages/attachments/get */
+    static getAttachmentById(access_token, user_email, message_id, attachment_id) {
+        //  GET https://www.googleapis.com/gmail/v1/users/userId/messages/messageId/attachments/id
+        return new Promise((resolve, reject) => {
+            Logger_1.Logger.d(TAG, '*** GETTING ATTACHMENT :' + attachment_id + ' OF MESSAGE :' + message_id + '   ***');
+            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages/${message_id}/attachments/${attachment_id}`, {
+                json: true,
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+            }, (err, res, attachmentData) => __awaiter(this, void 0, void 0, function* () {
+                if (!res) {
+                    Logger_1.Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
+                    return reject();
+                }
+                if (err) {
+                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
+                    return reject(err);
+                }
+                if (res.statusCode != 200) {
+                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
+                    reject(res.statusCode);
+                }
+                else {
+                    Logger_1.Logger.d(TAG, 'Attachment DATA >' + attachmentData.data);
+                }
+            }));
         });
     }
 }

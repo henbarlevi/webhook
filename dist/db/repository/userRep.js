@@ -17,7 +17,7 @@ class UserRepository {
                     return res(userDoc);
                 }
                 Logger_1.Logger.d(TAG, 'user Found : ');
-                console.log(userDoc);
+                //  console.log(userDoc);
                 res(userDoc);
             });
         });
@@ -33,7 +33,7 @@ class UserRepository {
                     return rej(err);
                 }
                 Logger_1.Logger.d(TAG, 'user created/updated');
-                console.log(userDoc);
+                //      console.log(userDoc);
                 res(userDoc);
             });
         });
@@ -47,7 +47,7 @@ class UserRepository {
                     return rej(err);
                 }
                 Logger_1.Logger.d(TAG, 'user updated');
-                console.log(userDoc);
+                //      console.log(userDoc);
                 res(userDoc);
             });
         });
@@ -64,7 +64,7 @@ class UserRepository {
                     return res(userDoc);
                 }
                 Logger_1.Logger.d(TAG, 'user Found : ');
-                console.log(userDoc);
+                //    console.log(userDoc);
                 res(userDoc);
             });
         });
@@ -79,7 +79,7 @@ class UserRepository {
                     return rej(err);
                 }
                 Logger_1.Logger.d(TAG, 'user gmail webhook details updated');
-                console.log(userDoc);
+                //  console.log(userDoc);
                 res(userDoc);
             });
         });
