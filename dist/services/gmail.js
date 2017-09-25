@@ -124,7 +124,7 @@ class GmailService {
             });
         });
     }
-    /**https://developers.google.com/gmail/api/v1/reference/users/messages/list - NOT RELEVANT TO WEBHOOK - JUST CHECKING THE Oauth scope permissions is correct */
+    /**NOT RELEVANT TO WEBHOOK - JUST CHECKING THE Oauth scope permissions is correct https://developers.google.com/gmail/api/v1/reference/users/messages/list -  */
     static getUserMessages(access_token, user_email) {
         return new Promise((resolve, reject) => {
             const exp_date = generateExpDate();
@@ -164,7 +164,10 @@ class GmailService {
     static getChanges(access_token, user_email, historyId, pageToken) {
         return new Promise((resolve, reject) => {
             const exp_date = generateExpDate();
-            Logger_1.Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS  === user_email : ' + user_email + ' access_Token :' + access_token + ' historyId :' + historyId + '***');
+            Logger_1.Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS (history list request)   ***');
+            Logger_1.Logger.d(TAG, 'User Email =' + user_email);
+            Logger_1.Logger.d(TAG, 'User Access Token =' + access_token);
+            Logger_1.Logger.d(TAG, 'HistoryId =' + historyId);
             request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/history?` + 'startHistoryId=' + historyId, {
                 json: true,
                 headers: {

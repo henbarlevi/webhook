@@ -105,7 +105,7 @@ export class UserRepository {
     }
     updateUserGmailHistoryId(email: string, historyId: string) {
         return new Promise((res, rej) => {
-            Logger.d(TAG, '**updating user Gmail-webhook historyId** ');
+            Logger.d(TAG, '**updating user Gmail-webhook historyId to : '+historyId+ ' ** ');
 
             User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gmail.webhook.historyId": historyId } }, (err, userDoc) => {
 
@@ -114,7 +114,7 @@ export class UserRepository {
                     return rej(err);
                 }
                 Logger.d(TAG, 'user gmail webhook historyId updated');
-                console.log(userDoc);
+               // console.log(userDoc);
 
                 res(userDoc);
             })

@@ -86,14 +86,14 @@ class UserRepository {
     }
     updateUserGmailHistoryId(email, historyId) {
         return new Promise((res, rej) => {
-            Logger_1.Logger.d(TAG, '**updating user Gmail-webhook historyId** ');
+            Logger_1.Logger.d(TAG, '**updating user Gmail-webhook historyId to : ' + historyId + ' ** ');
             user_1.User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gmail.webhook.historyId": historyId } }, (err, userDoc) => {
                 if (err) {
                     Logger_1.Logger.d(TAG, 'DB ERROR! ', 'red');
                     return rej(err);
                 }
                 Logger_1.Logger.d(TAG, 'user gmail webhook historyId updated');
-                console.log(userDoc);
+                // console.log(userDoc);
                 res(userDoc);
             });
         });
