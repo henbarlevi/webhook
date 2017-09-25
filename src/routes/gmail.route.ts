@@ -22,11 +22,11 @@ router.get('/auth', (req, res) => {
     let url: string = GmailService.authPageUrl();
     res.redirect(url);
 })
+
 /*1.Oauth - b.exchange code with access token
     and get user email
   2. Webhook - registering to webhook in order to get user Gdrive activities https://developers.google.com/gmail/api/guides/push
-  
-
+    TODO - check if this user already registered to gmail webhook - if so - there is no need to register him again unless the time expierd
   */
 router.get('/code', async (req: express.Request, res) => {
     try {
@@ -69,8 +69,10 @@ router.post('/webhook', async (req: express.Request, res) => {
         let access_token: string = userDoc.google.tokens.access_token;
         let historyId: string = userDoc.google.gmail.webhook.historyId;
         if (userDoc.google.tokens.access_token) {
-            let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
-            //save the historyId in db (for the next notificaiton for this user in the future) -TODO:
+            //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
+            let changesDetails: iGmailChangesResponse = await GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
+            
+            //save the historyId in db (for the next notificaiton for this user in the future) :
             await userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId)
         }
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');

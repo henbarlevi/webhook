@@ -42,7 +42,7 @@
       },
       {
        "name": "To",
-       "value": "hen10102@walla.com" //reciver
+       "value": "hen10102@walla.com" //reciever
       },
       {
        "name": "Content-Type",
@@ -79,7 +79,7 @@
          ],
          "body": {
           "size": 14,
-          "data": "VFRUVFRUVFRUVFRUDQo=" //content of the message in base64
+          "data": "VFRUVFRUVFRUVFRUDQo=" //content of the email message in base64
          }
         },
         {

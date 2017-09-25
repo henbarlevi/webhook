@@ -19,7 +19,7 @@ export class UserRepository {
                     return res(userDoc)
                 }
                 Logger.d(TAG, 'user Found : ');
-                console.log(userDoc);
+              //  console.log(userDoc);
 
                 res(userDoc);
 
@@ -41,7 +41,7 @@ export class UserRepository {
                     return rej(err);
                 }
                 Logger.d(TAG, 'user created/updated');
-                console.log(userDoc);
+          //      console.log(userDoc);
 
                 res(userDoc);
             })
@@ -58,7 +58,7 @@ export class UserRepository {
                     return rej(err);
                 }
                 Logger.d(TAG, 'user updated');
-                console.log(userDoc);
+          //      console.log(userDoc);
 
                 res(userDoc);
             })
@@ -78,7 +78,7 @@ export class UserRepository {
                     return res(userDoc)
                 }
                 Logger.d(TAG, 'user Found : ');
-                console.log(userDoc);
+            //    console.log(userDoc);
 
                 res(userDoc);
 
@@ -97,7 +97,7 @@ export class UserRepository {
                     return rej(err);
                 }
                 Logger.d(TAG, 'user gmail webhook details updated');
-                console.log(userDoc);
+              //  console.log(userDoc);
 
                 res(userDoc);
             })
