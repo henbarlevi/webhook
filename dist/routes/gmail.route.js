@@ -67,8 +67,9 @@ router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* 
         let userRep = new userRep_1.UserRepository();
         let userDoc = yield userRep.getUserByGoogleEmail(notificationData.emailAddress);
         let access_token = userDoc.google.tokens.access_token;
+        let historyId = userDoc.google.gmail.webhook.historyId;
         if (userDoc.google.tokens.access_token) {
-            let changesDetails = yield gmail_1.GmailService.getChanges(access_token, notificationData.emailAddress, notificationData.historyId);
+            let changesDetails = yield gmail_1.GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
             //save the historyId in db (for the next notificaiton for this user in the future) -TODO:
             yield userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId);
         }

@@ -187,7 +187,7 @@ export class GmailService {
         return new Promise((resolve, reject) => {
             const exp_date: number = generateExpDate();
             Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS  === user_email : ' + user_email + ' access_Token :' + access_token + ' historyId :' + historyId + '***');
-
+            
             request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/history?` + 'startHistoryId=' + historyId, {
                 json: true,
                 headers: {
