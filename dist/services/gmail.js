@@ -90,8 +90,7 @@ class GmailService {
   */
     static registerWebhook(access_token, user_email) {
         return new Promise((resolve, reject) => {
-            const exp_date = generateExpDate();
-            Logger_1.Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GMAIL  === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + '***');
+            Logger_1.Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GMAIL  === user_email : ' + user_email + ' access_Token :' + access_token + '***');
             const req_body = {
                 topicName: "projects/webhooks-179808/topics/mytopic",
                 labelIds: [
@@ -124,11 +123,12 @@ class GmailService {
             });
         });
     }
-    /**NOT RELEVANT TO WEBHOOK - JUST CHECKING THE Oauth scope permissions is correct https://developers.google.com/gmail/api/v1/reference/users/messages/list -  */
+    /**NOT RELEVANT TO WEBHOOK - JUST CHECKING THE Oauth scope permissions is correct https://developers.google.com/gmail/api/v1/reference/users/messages/list -
+     * Advance search : https://developers.google.com/gmail/api/guides/filtering
+    */
     static getUserMessages(access_token, user_email) {
         return new Promise((resolve, reject) => {
-            const exp_date = generateExpDate();
-            Logger_1.Logger.d(TAG, '*** GETTING USER GMAIL MESSAGES  LIST === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + '***');
+            Logger_1.Logger.d(TAG, '*** GETTING USER GMAIL MESSAGES  LIST === user_email : ' + user_email + ' access_Token :' + access_token + '***');
             request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages`, {
                 json: true,
                 headers: {
@@ -154,7 +154,33 @@ class GmailService {
         });
     }
     /**https://developers.google.com/gmail/api/v1/reference/users/messages/attachments/get */
-    static getMessageAttachments() {
+    static getMessageAttachments(access_token, user_email, message_id, attachment_id) {
+        //  GET https://www.googleapis.com/gmail/v1/users/userId/messages/messageId/attachments/id
+        return new Promise((resolve, reject) => {
+            Logger_1.Logger.d(TAG, '*** GETTING ATTACHMENT :' + attachment_id + ' OF MESSAGE :' + message_id + '   ***');
+            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages/${message_id}/attachments/${attachment_id}`, {
+                json: true,
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+            }, (err, res, attachmentData) => __awaiter(this, void 0, void 0, function* () {
+                if (!res) {
+                    Logger_1.Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
+                    return reject();
+                }
+                if (err) {
+                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
+                    return reject(err);
+                }
+                if (res.statusCode != 200) {
+                    Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
+                    reject(res.statusCode);
+                }
+                else {
+                    Logger_1.Logger.d(TAG, 'Attachment DATA >' + attachmentData.data);
+                }
+            }));
+        });
     }
     static getStartPageToken(access_token) {
         return new Promise((resolve, reject) => {

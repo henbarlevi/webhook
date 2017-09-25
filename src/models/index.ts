@@ -8,3 +8,5 @@ export * from './google/gdrive/iGdriveWebSubResponse.model';
 export * from './google/gmail/iGmailNotification.model';
 export * from './google/gmail/iGmailChangesResponse.model';
 export * from './google/gmail/iGmailWebSubResponse.model';
+export * from './google/gmail/iAttachmentData.model';
+

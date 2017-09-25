@@ -7,7 +7,7 @@ import * as uuid from 'uuid';
 //const googleAuth = require('google-auth-library'); //alternative SDK library for 'googleapis
 
 // === MODELS ===
-import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iGmailChangesResponse,iGmailWebSubResponse } from '../models/';
+import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iGmailChangesResponse, iGmailWebSubResponse ,iAttachmentData} from '../models/';
 
 
 // === UTILS ===
@@ -104,8 +104,7 @@ export class GmailService {
     static registerWebhook(access_token: string, user_email: string): Promise<iGmailWebSubResponse> {
         return new Promise((resolve, reject) => {
 
-            const exp_date: number = generateExpDate();
-            Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GMAIL  === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + '***');
+            Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GMAIL  === user_email : ' + user_email  + ' access_Token :' + access_token + '***');
             const req_body = {
                 topicName: "projects/webhooks-179808/topics/mytopic", //as registered when creating the topic https://console.cloud.google.com/cloudpubsub
                 labelIds: [
@@ -140,12 +139,13 @@ export class GmailService {
             });
         });
     }
-    /**NOT RELEVANT TO WEBHOOK - JUST CHECKING THE Oauth scope permissions is correct https://developers.google.com/gmail/api/v1/reference/users/messages/list -  */
+    /**NOT RELEVANT TO WEBHOOK - JUST CHECKING THE Oauth scope permissions is correct https://developers.google.com/gmail/api/v1/reference/users/messages/list -  
+     * Advance search : https://developers.google.com/gmail/api/guides/filtering
+    */
     static getUserMessages(access_token: string, user_email: string): Promise<any> {
         return new Promise((resolve, reject) => {
 
-            const exp_date: number = generateExpDate();
-            Logger.d(TAG, '*** GETTING USER GMAIL MESSAGES  LIST === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + '***');
+            Logger.d(TAG, '*** GETTING USER GMAIL MESSAGES  LIST === user_email : ' + user_email + ' access_Token :' + access_token + '***');
 
             request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages`, {
                 json: true,
@@ -174,8 +174,36 @@ export class GmailService {
         });
     }
     /**https://developers.google.com/gmail/api/v1/reference/users/messages/attachments/get */
-    static getMessageAttachments() {
+    static getMessageAttachments(access_token: string, user_email: string,message_id:string,attachment_id:string) {
+        //  GET https://www.googleapis.com/gmail/v1/users/userId/messages/messageId/attachments/id
+        return new Promise((resolve, reject) => {
+            Logger.d(TAG, '*** GETTING ATTACHMENT :'+attachment_id+' OF MESSAGE :'+message_id +'   ***');
+            request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/messages/${message_id}/attachments/${attachment_id}`, {
+                json: true,
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                //body: req_body
+            }, async (err, res, attachmentData: iAttachmentData) => {
+                if (!res) {
+                    Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
+                    return reject();
+                }
+                if (err) {
+                    Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
+                    return reject(err);
+                }
 
+                if (res.statusCode != 200) {
+                    Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
+                    reject(res.statusCode);
+                }
+                else {
+                    Logger.d(TAG,'Attachment DATA >'+ attachmentData.data);
+                    
+                }
+            });
+        });
     }
     static getStartPageToken(access_token: string): Promise<string> {
         return new Promise((resolve, reject) => {
@@ -187,11 +215,11 @@ export class GmailService {
         return new Promise((resolve, reject) => {
             const exp_date: number = generateExpDate();
             Logger.d(TAG, '*** GETTING USER GMAIL ACTIVITIES DETAILS (history list request)   ***');
-            Logger.d(TAG,'User Email =' +user_email);
-            Logger.d(TAG,'User Access Token =' +access_token);
-            Logger.d(TAG,'HistoryId =' +historyId);
-            
-            
+            Logger.d(TAG, 'User Email =' + user_email);
+            Logger.d(TAG, 'User Access Token =' + access_token);
+            Logger.d(TAG, 'HistoryId =' + historyId);
+
+
             request.get(`https://www.googleapis.com/gmail/v1/users/${user_email}/history?` + 'startHistoryId=' + historyId, {
                 json: true,
                 headers: {
