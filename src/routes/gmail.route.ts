@@ -4,7 +4,7 @@ import * as Rx from 'rxjs';
 import * as path from 'path';
 import { GmailService } from '../services/gmail';
 // ===== Models =====
-import { iGoogleToken, iGmailNotification, iGmailNotificationData,iGmailChangesResponse } from '../models';
+import { iGoogleToken, iGmailNotification, iGmailNotificationData, iGmailChangesResponse, iGmailWebSubResponse } from '../models';
 // ===== DB =====
 import { UserRepository, iUserDB } from '../db/repository/userRep'
 // ===== UTILS =====
@@ -39,14 +39,16 @@ router.get('/code', async (req: express.Request, res) => {
         let email: string = await GmailService.getUserEmail(token.id_token);
         Logger.d(TAG, 'user email >' + email, 'gray');
         Logger.d(TAG, '========== 2. Webhook - registering to webhook in order to get user Gmail activities ==========' + code, 'green');
-        
-        await GmailService.registerWebhook(token.access_token, email);
+
+        let webhookSubscription: iGmailWebSubResponse = await GmailService.registerWebhook(token.access_token, email);
         let userRep = new UserRepository();
-        await userRep.updateOrCreateUserGoogleCreds(email, token)
+        await userRep.updateOrCreateUserGoogleCreds(email, token);
+        await userRep.udpateUserGmailWebhook(email, webhookSubscription);
         res.status(200).send('Server hooked to your gmail Activities');
     }
     catch (e) {
         Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
+        res.status(400).send();
     }
 })
 /**getting Gmail user Activities (push notifications) */
@@ -56,23 +58,24 @@ router.post('/webhook', async (req: express.Request, res) => {
         Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
         Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
         Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
-        
+
         let notification: iGmailNotification = req.body;
         Logger.d(TAG, JSON.stringify(req.body), 'cyan');
-        let notificationData: iGmailNotificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii')); // decrypt from base64
+        // decrypt from base64:
+        let notificationData: iGmailNotificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii'));
         //get details about the pushed notification:
         let userRep = new UserRepository();
         let userDoc: iUserDB = await userRep.getUserByGoogleEmail(notificationData.emailAddress);
-        let access_token :string = userDoc.google.tokens.access_token;
-        let historyId = (parseInt(notificationData.historyId) - 5).toString();
-        if(userDoc.google.tokens.access_token){
-          let changesDetails: iGmailChangesResponse =  await GmailService.getChanges(access_token,notificationData.emailAddress,historyId);
+        let access_token: string = userDoc.google.tokens.access_token;
+        if (userDoc.google.tokens.access_token) {
+            let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, notificationData.historyId);
             //save the historyId in db (for the next notificaiton for this user in the future) -TODO:
+            await userRep.updateUserGmailHistoryId(notificationData.emailAddress,changesDetails.historyId)
         }
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
-        
+
 
     }
     catch (e) {

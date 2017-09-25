@@ -5,6 +5,23 @@ const Logger_1 = require("../../utils/Logger");
 const TAG = 'User Repository';
 class UserRepository {
     //partial update -https://stackoverflow.com/questions/11655270/mongoose-and-partial-select-update
+    getUserByGoogleEmail(email) {
+        return new Promise((res, rej) => {
+            Logger_1.Logger.d(TAG, `**finding user By Google Email > ${email}** `);
+            user_1.User.findOne({ 'google.email': email }, (err, userDoc) => {
+                if (err) {
+                    return rej(err);
+                }
+                if (!userDoc) {
+                    Logger_1.Logger.d(TAG, 'Didnt Find user! ');
+                    return res(userDoc);
+                }
+                Logger_1.Logger.d(TAG, 'user Found : ');
+                console.log(userDoc);
+                res(userDoc);
+            });
+        });
+    }
     updateOrCreateUserGoogleCreds(email, tokens) {
         return new Promise((res, rej) => {
             /*find user by email - if exist - update it/else create it*/
@@ -23,7 +40,7 @@ class UserRepository {
     }
     updateUserGdriveWebhook(email, webhook) {
         return new Promise((res, rej) => {
-            Logger_1.Logger.d(TAG, '**updating user Gdrive-Webhook Creds/creating user** ');
+            Logger_1.Logger.d(TAG, '**updating user Gdrive-Webhook ** ');
             user_1.User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gdrive.webhook": webhook } }, (err, userDoc) => {
                 if (err) {
                     Logger_1.Logger.d(TAG, 'DB ERROR! ', 'red');
@@ -52,18 +69,30 @@ class UserRepository {
             });
         });
     }
-    getUserByGoogleEmail(email) {
+    // ============= GMAIL
+    udpateUserGmailWebhook(email, webhook) {
         return new Promise((res, rej) => {
-            Logger_1.Logger.d(TAG, `**finding user By Google Email > ${email}** `);
-            user_1.User.findOne({ 'google.email': email }, (err, userDoc) => {
+            Logger_1.Logger.d(TAG, '**updating user Gmail-Webhook Creds** ');
+            user_1.User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gmail.webhook": webhook } }, (err, userDoc) => {
                 if (err) {
+                    Logger_1.Logger.d(TAG, 'DB ERROR! ', 'red');
                     return rej(err);
                 }
-                if (!userDoc) {
-                    Logger_1.Logger.d(TAG, 'Didnt Find user! ');
-                    return res(userDoc);
+                Logger_1.Logger.d(TAG, 'user gmail webhook details updated');
+                console.log(userDoc);
+                res(userDoc);
+            });
+        });
+    }
+    updateUserGmailHistoryId(email, historyId) {
+        return new Promise((res, rej) => {
+            Logger_1.Logger.d(TAG, '**updating user Gmail-webhook historyId** ');
+            user_1.User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gmail.webhook.historyId": historyId } }, (err, userDoc) => {
+                if (err) {
+                    Logger_1.Logger.d(TAG, 'DB ERROR! ', 'red');
+                    return rej(err);
                 }
-                Logger_1.Logger.d(TAG, 'user Found : ');
+                Logger_1.Logger.d(TAG, 'user gmail webhook historyId updated');
                 console.log(userDoc);
                 res(userDoc);
             });

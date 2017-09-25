@@ -35,5 +35,5 @@ export interface iGmailChangesResponse{
       }
     ],
     nextPageToken: string,
-    historyId:String //if nextPageToken not exist (reached to the end of the updates), we need to store this historyId for the next get changes request for that user
+    historyId:string //if nextPageToken not exist (reached to the end of the updates), we need to store this historyId for the next get changes request for that user
   }

@@ -43,7 +43,8 @@ const schema = new Schema({
         },
         gmail: {
             webhook: {
-                historyId: String /*from which point of time we wont to get user gmail activities/changes */
+                historyId: String,
+                expiration: Number /**expiration timestamp */
             }
         }
     }

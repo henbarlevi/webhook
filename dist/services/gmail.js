@@ -12,8 +12,6 @@ const config = require("config");
 const google = require("googleapis");
 const plus = google.plus('v1');
 const request = require("request");
-// import * as httpCodes from 'http-status-codes';
-const uuid = require("uuid");
 // === UTILS ===
 const Logger_1 = require("../utils/Logger");
 const TAG = 'GMAIL';
@@ -94,11 +92,11 @@ class GmailService {
         return new Promise((resolve, reject) => {
             const exp_date = generateExpDate();
             Logger_1.Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GMAIL  === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + '***');
-            // this uniqueId  
-            const uniqueId = uuid(); //generate random string
             const req_body = {
                 topicName: "projects/webhooks-179808/topics/mytopic",
-                labelIds: [],
+                labelIds: [
+                    "INBOX"
+                ],
             };
             request.post(`https://www.googleapis.com/gmail/v1/users/${user_email}/watch`, {
                 json: true,

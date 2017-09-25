@@ -7,7 +7,7 @@ import * as uuid from 'uuid';
 //const googleAuth = require('google-auth-library'); //alternative SDK library for 'googleapis
 
 // === MODELS ===
-import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iGmailChangesResponse } from '../models/';
+import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iGmailChangesResponse,iGmailWebSubResponse } from '../models/';
 
 
 // === UTILS ===
@@ -101,17 +101,15 @@ export class GmailService {
     *you didnt grant publish priviliges to serviceAccount:gmail-api-push@system.gserviceaccount.com in the  IAM:
         https://developers.google.com/gmail/api/guides/push#grant_publish_rights_on_your_topic , https://console.cloud.google.com/iam-admin/iam  
   */
-    static registerWebhook(access_token: string, user_email: string): Promise<any> {
+    static registerWebhook(access_token: string, user_email: string): Promise<iGmailWebSubResponse> {
         return new Promise((resolve, reject) => {
 
             const exp_date: number = generateExpDate();
             Logger.d(TAG, '*** REGISTRETING WEB HOOK FOR GMAIL  === user_email : ' + user_email + ' exp_date : ' + exp_date + ' access_Token :' + access_token + '***');
-            // this uniqueId  
-            const uniqueId: string = uuid(); //generate random string
             const req_body = {
                 topicName: "projects/webhooks-179808/topics/mytopic", //as registered when creating the topic https://console.cloud.google.com/cloudpubsub
                 labelIds: [
-                //    "INBOX"
+                    "INBOX"
                 ],
             }
             request.post(`https://www.googleapis.com/gmail/v1/users/${user_email}/watch`, {
@@ -120,7 +118,7 @@ export class GmailService {
                     Authorization: 'Bearer ' + access_token
                 },
                 body: req_body
-            }, (err, res, subscription: any) => {
+            }, (err, res, subscription: iGmailWebSubResponse) => {
                 if (!res) {
                     Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
                     return reject();

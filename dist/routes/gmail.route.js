@@ -42,13 +42,15 @@ router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
         let email = yield gmail_1.GmailService.getUserEmail(token.id_token);
         Logger_1.Logger.d(TAG, 'user email >' + email, 'gray');
         Logger_1.Logger.d(TAG, '========== 2. Webhook - registering to webhook in order to get user Gmail activities ==========' + code, 'green');
-        yield gmail_1.GmailService.registerWebhook(token.access_token, email);
+        let webhookSubscription = yield gmail_1.GmailService.registerWebhook(token.access_token, email);
         let userRep = new userRep_1.UserRepository();
         yield userRep.updateOrCreateUserGoogleCreds(email, token);
+        yield userRep.udpateUserGmailWebhook(email, webhookSubscription);
         res.status(200).send('Server hooked to your gmail Activities');
     }
     catch (e) {
         Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
+        res.status(400).send();
     }
 }));
 /**getting Gmail user Activities (push notifications) */
@@ -59,15 +61,16 @@ router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* 
         Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
         let notification = req.body;
         Logger_1.Logger.d(TAG, JSON.stringify(req.body), 'cyan');
-        let notificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii')); // decrypt from base64
+        // decrypt from base64:
+        let notificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii'));
         //get details about the pushed notification:
         let userRep = new userRep_1.UserRepository();
         let userDoc = yield userRep.getUserByGoogleEmail(notificationData.emailAddress);
         let access_token = userDoc.google.tokens.access_token;
-        let historyId = (parseInt(notificationData.historyId) - 5).toString();
         if (userDoc.google.tokens.access_token) {
-            let changesDetails = yield gmail_1.GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
+            let changesDetails = yield gmail_1.GmailService.getChanges(access_token, notificationData.emailAddress, notificationData.historyId);
             //save the historyId in db (for the next notificaiton for this user in the future) -TODO:
+            yield userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId);
         }
         Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');

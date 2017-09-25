@@ -41,9 +41,10 @@ const schema = new Schema({
                 pageToken: String
             }
         },
-        gmail:{
-            webhook:{
-                historyId :String /*from which point of time we wont to get user gmail activities/changes */
+        gmail: {
+            webhook: {
+                historyId: String, /*from which point of time we wont to get user gmail activities/changes */
+                expiration: Number /**expiration timestamp */
             }
         }
     }

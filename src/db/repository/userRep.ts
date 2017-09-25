@@ -2,10 +2,30 @@ import { User } from '../schemas/user';
 import { Logger } from '../../utils/Logger';
 
 // ===== models
-import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse } from '../../models';
+import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iGmailWebSubResponse } from '../../models';
 const TAG: string = 'User Repository';
 export class UserRepository {
     //partial update -https://stackoverflow.com/questions/11655270/mongoose-and-partial-select-update
+    getUserByGoogleEmail(email: string): Promise<any> {
+        return new Promise((res, rej) => {
+            Logger.d(TAG, `**finding user By Google Email > ${email}** `);
+
+            User.findOne({ 'google.email': email }, (err, userDoc) => {
+                if (err) {
+                    return rej(err);
+                }
+                if (!userDoc) {
+                    Logger.d(TAG, 'Didnt Find user! ');
+                    return res(userDoc)
+                }
+                Logger.d(TAG, 'user Found : ');
+                console.log(userDoc);
+
+                res(userDoc);
+
+            })
+        });
+    }
     updateOrCreateUserGoogleCreds(email: string, tokens: iGoogleToken) {
         return new Promise((res, rej) => {
 
@@ -29,7 +49,7 @@ export class UserRepository {
     }
     updateUserGdriveWebhook(email: string, webhook: iGdriveWebhook) {
         return new Promise((res, rej) => {
-            Logger.d(TAG, '**updating user Gdrive-Webhook Creds/creating user** ');
+            Logger.d(TAG, '**updating user Gdrive-Webhook ** ');
 
             User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gdrive.webhook": webhook } }, (err, userDoc) => {
 
@@ -65,26 +85,42 @@ export class UserRepository {
             })
         });
     }
-    getUserByGoogleEmail(email: string): Promise<any> {
+    // ============= GMAIL
+    udpateUserGmailWebhook(email: string, webhook: iGmailWebSubResponse) {
         return new Promise((res, rej) => {
-            Logger.d(TAG, `**finding user By Google Email > ${email}** `);
+            Logger.d(TAG, '**updating user Gmail-Webhook Creds** ');
 
-            User.findOne({ 'google.email': email }, (err, userDoc) => {
+            User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gmail.webhook": webhook } }, (err, userDoc) => {
+
                 if (err) {
+                    Logger.d(TAG, 'DB ERROR! ', 'red');
                     return rej(err);
                 }
-                if (!userDoc) {
-                    Logger.d(TAG, 'Didnt Find user! ');
-                    return res(userDoc)
-                }
-                Logger.d(TAG, 'user Found : ');
+                Logger.d(TAG, 'user gmail webhook details updated');
                 console.log(userDoc);
 
                 res(userDoc);
-
             })
-        });
+        })
     }
+    updateUserGmailHistoryId(email: string, historyId: string) {
+        return new Promise((res, rej) => {
+            Logger.d(TAG, '**updating user Gmail-webhook historyId** ');
+
+            User.findOneAndUpdate({ 'google.email': email }, { $set: { "google.gmail.webhook.historyId": historyId } }, (err, userDoc) => {
+
+                if (err) {
+                    Logger.d(TAG, 'DB ERROR! ', 'red');
+                    return rej(err);
+                }
+                Logger.d(TAG, 'user gmail webhook historyId updated');
+                console.log(userDoc);
+
+                res(userDoc);
+            })
+        })
+    }
+
 }
 
 export interface iUserDB {
@@ -95,7 +131,7 @@ export interface iUserDB {
             webhook: iGdriveWebhook
         },
         gmail: {
-            webhook: {}
+            webhook: iGmailWebSubResponse
         }
     }
 }
