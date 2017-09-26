@@ -170,7 +170,7 @@ export class GmailService {
                 }
 
                 if (res.statusCode != 200) {
-                    reject(JSON.stringify(subscription));
+                    reject(res.statusCode);
                 }
                 else {
                     Logger.d(TAG, 'GET gmail messages list succeded', 'green');
@@ -351,7 +351,7 @@ export class GmailService {
                 }
 
                 if (res.statusCode != 200) {
-                    Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
+                    Logger.d(TAG, 'Err in getMessageById >>>>>>>>>>>' + res.statusCode, 'red');
                     reject(res.statusCode);
                 }
                 else {
@@ -383,7 +383,7 @@ export class GmailService {
                 }
 
                 if (res.statusCode != 200) {
-                    Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
+                    Logger.d(TAG, 'Err in getAttachmentById >>>>>>>>>>>' + res.statusCode, 'red');
                     reject(res.statusCode);
                 }
                 else {
