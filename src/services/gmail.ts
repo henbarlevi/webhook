@@ -140,7 +140,7 @@ export class GmailService {
         });
     }
     /**NOT RELEVANT TO WEBHOOK - JUST CHECKING THE Oauth scope permissions is correct https://developers.google.com/gmail/api/v1/reference/users/messages/list -  
-     * Advance search : https://developers.google.com/gmail/api/guides/filtering
+     * NOTE -Advanced search for querying only relevant messages: https://developers.google.com/gmail/api/guides/filtering
     */
     static getUserMessages(access_token: string, user_email: string): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -195,7 +195,7 @@ export class GmailService {
                 }
                 resolve(changes);
             }
-            catch(e){
+            catch (e) {
                 reject(e);
             }
         });
@@ -233,8 +233,8 @@ export class GmailService {
                 }
                 else {
                     Logger.d(TAG, 'GET Gmail Changes Details  succeded', 'green');
+                    Logger.d(TAG, JSON.stringify(changes), 'green');
                     resolve(changes);
-                    // Logger.d(TAG, JSON.stringify(changes), 'green');
                     // Logger.d(TAG, `GETTING MESSAGE DETAILS for each change >`, 'green');
 
                     // //changes.history.messages //TODO

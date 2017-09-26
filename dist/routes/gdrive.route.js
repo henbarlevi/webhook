@@ -15,7 +15,7 @@ const gdrive_1 = require("../services/gdrive");
 const userRep_1 = require("../db/repository/userRep");
 // ===== UTILS =====
 const Logger_1 = require("../utils/Logger");
-const TAG = 'AppRoutes';
+const TAG = 'GdriveRoutes';
 const router = express.Router();
 router.get('/', (req, res) => {
     res.send('welcome to server api /');

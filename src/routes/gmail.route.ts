@@ -9,7 +9,7 @@ import { iGoogleToken, iGmailNotification, iGmailNotificationData, iGmailChanges
 import { UserRepository, iUserDB } from '../db/repository/userRep'
 // ===== UTILS =====
 import { Logger } from '../utils/Logger'
-const TAG: string = 'AppRoutes';
+const TAG: string = 'GmailRoutes';
 const router: express.Router = express.Router();
 /**
  * in order to establish Gmail webhook for your app
@@ -77,18 +77,10 @@ router.post('/webhook', async (req: express.Request, res) => {
             historyId = notificationData.historyId;
         }
         if (userDoc.google.tokens.access_token) {
-            //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
-            try {
-
+            //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);         
                 let changesDetails: iGmailChangesResponse = await GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
                 //save the historyId in db (for the next notificaiton for this user in the future) :
-                await userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId)
-            }
-            catch(e){
-                if(e===401){
-                    GmailService.stopNotifications(access_token,notificationData.emailAddress);
-                }
-            }
+                await userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId)            
         }
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');

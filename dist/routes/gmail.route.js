@@ -14,7 +14,7 @@ const gmail_1 = require("../services/gmail");
 const userRep_1 = require("../db/repository/userRep");
 // ===== UTILS =====
 const Logger_1 = require("../utils/Logger");
-const TAG = 'AppRoutes';
+const TAG = 'GmailRoutes';
 const router = express.Router();
 /**
  * in order to establish Gmail webhook for your app
@@ -77,17 +77,10 @@ router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* 
             historyId = notificationData.historyId;
         }
         if (userDoc.google.tokens.access_token) {
-            //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
-            try {
-                let changesDetails = yield gmail_1.GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
-                //save the historyId in db (for the next notificaiton for this user in the future) :
-                yield userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId);
-            }
-            catch (e) {
-                if (e === 401) {
-                    gmail_1.GmailService.stopNotifications(access_token, notificationData.emailAddress);
-                }
-            }
+            //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);         
+            let changesDetails = yield gmail_1.GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
+            //save the historyId in db (for the next notificaiton for this user in the future) :
+            yield userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId);
         }
         Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
