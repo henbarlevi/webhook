@@ -179,6 +179,38 @@ export class GmailService {
 
         });
     }
+    /*if we wont to shut down a notification channel
+     https://developers.google.com/gmail/api/v1/reference/users/stop */
+    static stopNotifications(access_token: string, user_email: string) {
+        return new Promise((resolve, reject) => {
+            Logger.d(TAG, `*** STOPING Webhhok for user : ${user_email} Details   ***`);
+            request.post(`https://www.googleapis.com/gmail/v1/users/${user_email}/stop`, {
+                json: true,
+                headers: {
+                    Authorization: 'Bearer ' + access_token
+                },
+                //body: req_body
+            }, (err, res, body) => {
+                if (!res) {
+                    Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
+                    return reject();
+                }
+                if (err) {
+                    Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
+                    return reject(err);
+                }
+
+                if (res.statusCode != 200) {
+                    Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
+                    reject(res.statusCode);
+                }
+                else {
+                    Logger.d(TAG, `Webhook to ${user_email} has succesfully shut down`);
+                    resolve();
+                }
+            });
+        });
+    }
     static handleNotification(access_token: string, user_email: string, historyId: string): Promise<iGmailChangesResponse> {
         return new Promise(async (resolve, reject) => {
             try {
@@ -188,8 +220,8 @@ export class GmailService {
                     changes = await this.getChanges(access_token, user_email, historyId);
                     changes.history ? //is response contain history details
                         changes.history.forEach(historyFregment => {
-                            historyFregment.messages.forEach(message => {
-                                this.getMessageAttachments(access_token, user_email, message.id);
+                            historyFregment.messages.forEach(async message => {
+                                await this.getMessageAttachments(access_token, user_email, message.id);
                             })
                         }) : Logger.d(TAG, 'there are no more info for that history List');
                 }
@@ -252,49 +284,27 @@ export class GmailService {
         });
 
     }
-    /*if we wont to shut down a notification channel
-     https://developers.google.com/gmail/api/v1/reference/users/stop */
-    static stopNotifications(access_token: string, user_email: string) {
-        return new Promise((resolve, reject) => {
-            Logger.d(TAG, `*** STOPING Webhhok for user : ${user_email} Details   ***`);
-            request.post(`https://www.googleapis.com/gmail/v1/users/${user_email}/stop`, {
-                json: true,
-                headers: {
-                    Authorization: 'Bearer ' + access_token
-                },
-                //body: req_body
-            }, (err, res, body) => {
-                if (!res) {
-                    Logger.d(TAG, 'Response is empty - maybe you are not connected to the internet', 'red');
-                    return reject();
-                }
-                if (err) {
-                    Logger.d(TAG, 'Err >>>>>>>>>>>' + err, 'red');
-                    return reject(err);
-                }
 
-                if (res.statusCode != 200) {
-                    Logger.d(TAG, 'Err >>>>>>>>>>>' + res.statusCode, 'red');
-                    reject(res.statusCode);
-                }
-                else {
-                    Logger.d(TAG, `Webhook to ${user_email} has succesfully shut down`);
-                    resolve();
-                }
-            });
-        });
-    }
 
 
     private static getMessageAttachments(access_token: string, user_email: string, message_id: string) {
         return new Promise(async (resovle, reject) => {
-            Logger.d(TAG, `****** Checking if Message : ${message_id} Has Attachments   ******`);
-            let gmailMessage: iGmailMessage = await this.getMessage(access_token, user_email, message_id);
-            let attachments: iPayload[] = this.checkMessageForAttachments(gmailMessage);
-            Logger.d(TAG, `==============  FOUND ATTACHMENTS  ==============`);
-            console.log(attachments);
-            console.log(JSON.stringify(attachments));
-            Logger.d(TAG, `==============/  FOUND ATTACHMENTS  ==============`);
+            try {
+                Logger.d(TAG, `****** Checking if Message : ${message_id} Has Attachments   ******`);
+                Logger.d(TAG, `user email = ${user_email}`);
+                Logger.d(TAG, `ccess_token = ${access_token}`);
+                Logger.d(TAG, `******************************************************************`);
+
+                let gmailMessage: iGmailMessage = await this.getMessage(access_token, user_email, message_id);
+                let attachments: iPayload[] = this.checkMessageForAttachments(gmailMessage);
+                Logger.d(TAG, `==============  FOUND ATTACHMENTS  ==============`);
+                console.log(attachments);
+                console.log(JSON.stringify(attachments));
+                Logger.d(TAG, `==============/  FOUND ATTACHMENTS  ==============`);
+            }
+            catch (e) {
+                reject(e);
+            }
         })
     }
     private static checkMessageForAttachments(gmailMessage: iGmailMessage): iPayload[] {
