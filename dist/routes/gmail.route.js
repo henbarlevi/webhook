@@ -78,9 +78,16 @@ router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* 
         }
         if (userDoc.google.tokens.access_token) {
             //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
-            let changesDetails = yield gmail_1.GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
-            //save the historyId in db (for the next notificaiton for this user in the future) :
-            yield userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId);
+            try {
+                let changesDetails = yield gmail_1.GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
+                //save the historyId in db (for the next notificaiton for this user in the future) :
+                yield userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId);
+            }
+            catch (e) {
+                if (e === 401) {
+                    gmail_1.GmailService.stopNotifications(access_token, notificationData.emailAddress);
+                }
+            }
         }
         Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger_1.Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
