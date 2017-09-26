@@ -234,7 +234,7 @@ export class GmailService {
 
                                 }
                                 catch (e) {
-                                    Logger.d(TAG, `Error while analayzing Message >>>>>> ${message.id} : ` + e, 'red');
+                                    Logger.d(TAG, `Error while analayzing Message ${message.id}>>>>>>  : ` + e, 'red');
                                     Logger.d(TAG, `moving to the next message`);
 
                                 }
@@ -315,7 +315,7 @@ export class GmailService {
                 Logger.d(TAG, `access_token = ${access_token}`);
 
                 let gmailMessage: iGmailMessage = await this.getMessage(access_token, user_email, message_id);
-                let attachments: iPayload[] = this.checkMessageForAttachments(gmailMessage);
+                let attachments: iPayload[] = this.searchForAttachmentsInPayload(gmailMessage.payload);
                 Logger.d(TAG, `==============  FOUND ATTACHMENTS  ==============`);
                 console.log(attachments);
                 console.log(JSON.stringify(attachments));
@@ -331,12 +331,18 @@ export class GmailService {
         return this.searchForAttachmentsInPayload(gmailMessage.payload);
     }
     private static searchForAttachmentsInPayload(payload: iPayload) {
+            console.log('part Id (of payload) :' +payload.partId)
         if (payload.filename != '') {
+            console.log('FOUND ATTACHMENT!');
+            console.log(payload);
+            
             return [payload];
         }
         if (!payload.parts) {
             return [];
         }
+        console.log('searching attachments in nested payloads of paylod :' +payload.partId)
+        
         let payloadsWithAttachments: iPayload[] = [];
         payload.parts.forEach((part: iPayload) => {
             payloadsWithAttachments.concat(this.searchForAttachmentsInPayload(part));

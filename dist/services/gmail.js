@@ -201,7 +201,7 @@ class GmailService {
                                     yield this.getMessageAttachments(access_token, user_email, message.id);
                                 }
                                 catch (e) {
-                                    Logger_1.Logger.d(TAG, `Error while analayzing Message >>>>>> ${message.id} : ` + e, 'red');
+                                    Logger_1.Logger.d(TAG, `Error while analayzing Message ${message.id}>>>>>>  : ` + e, 'red');
                                     Logger_1.Logger.d(TAG, `moving to the next message`);
                                 }
                                 finally {
@@ -272,7 +272,7 @@ class GmailService {
                 Logger_1.Logger.d(TAG, `user email = ${user_email}`);
                 Logger_1.Logger.d(TAG, `access_token = ${access_token}`);
                 let gmailMessage = yield this.getMessage(access_token, user_email, message_id);
-                let attachments = this.checkMessageForAttachments(gmailMessage);
+                let attachments = this.searchForAttachmentsInPayload(gmailMessage.payload);
                 Logger_1.Logger.d(TAG, `==============  FOUND ATTACHMENTS  ==============`);
                 console.log(attachments);
                 console.log(JSON.stringify(attachments));
@@ -288,12 +288,16 @@ class GmailService {
         return this.searchForAttachmentsInPayload(gmailMessage.payload);
     }
     static searchForAttachmentsInPayload(payload) {
+        console.log('part Id (of payload) :' + payload.partId);
         if (payload.filename != '') {
+            console.log('FOUND ATTACHMENT!');
+            console.log(payload);
             return [payload];
         }
         if (!payload.parts) {
             return [];
         }
+        console.log('searching attachments in nested payloads of paylod :' + payload.partId);
         let payloadsWithAttachments = [];
         payload.parts.forEach((part) => {
             payloadsWithAttachments.concat(this.searchForAttachmentsInPayload(part));
