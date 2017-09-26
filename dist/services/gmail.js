@@ -196,7 +196,17 @@ class GmailService {
                     if (changes.history) {
                         for (let historyFregment of changes.history) {
                             for (let message of historyFregment.messages) {
-                                yield this.getMessageAttachments(access_token, user_email, message.id);
+                                try {
+                                    Logger_1.Logger.d(TAG, `*********** analayzing message : ${message.id} ***********`);
+                                    yield this.getMessageAttachments(access_token, user_email, message.id);
+                                }
+                                catch (e) {
+                                    Logger_1.Logger.d(TAG, `Error while analayzing Message >>>>>> ${message.id} : ` + e, 'red');
+                                    Logger_1.Logger.d(TAG, `moving to the next message`);
+                                }
+                                finally {
+                                    Logger_1.Logger.d(TAG, `***********/END analayzing message : ${message.id} ***********`);
+                                }
                             }
                         }
                     }
@@ -258,11 +268,9 @@ class GmailService {
     static getMessageAttachments(access_token, user_email, message_id) {
         return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                Logger_1.Logger.d(TAG, `******************************************************************`);
                 Logger_1.Logger.d(TAG, ` Checking if Message : ${message_id} Has Attachments`);
                 Logger_1.Logger.d(TAG, `user email = ${user_email}`);
                 Logger_1.Logger.d(TAG, `access_token = ${access_token}`);
-                Logger_1.Logger.d(TAG, `******************************************************************`);
                 let gmailMessage = yield this.getMessage(access_token, user_email, message_id);
                 let attachments = this.checkMessageForAttachments(gmailMessage);
                 Logger_1.Logger.d(TAG, `==============  FOUND ATTACHMENTS  ==============`);
