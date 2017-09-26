@@ -16,6 +16,11 @@ const userRep_1 = require("../db/repository/userRep");
 const Logger_1 = require("../utils/Logger");
 const TAG = 'AppRoutes';
 const router = express.Router();
+/**
+ * in order to establish Gmail webhook for your app
+ * you fisrt need to go through this guidline :https://developers.google.com/gmail/api/guides/push
+ * which includes the pub/sub setup : https://cloud.google.com/pubsub/docs/quickstart-console
+ */
 router.get('/', (req, res) => {
     res.send('welcome to server api /gmail Route');
 });
@@ -67,6 +72,10 @@ router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* 
         let userDoc = yield userRep.getUserByGoogleEmail(notificationData.emailAddress);
         let access_token = userDoc.google.tokens.access_token;
         let historyId = userDoc.google.gmail.webhook.historyId;
+        if (!historyId) {
+            //use the historyId in the
+            historyId = notificationData.historyId;
+        }
         if (userDoc.google.tokens.access_token) {
             //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);
             let changesDetails = yield gmail_1.GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
