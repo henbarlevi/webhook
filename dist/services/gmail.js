@@ -295,12 +295,16 @@ class GmailService {
             return [payload];
         }
         if (!payload.parts) {
+            console.log('Attachments not exist in payload ' + payload.partId);
             return [];
         }
         console.log('searching attachments in nested payloads of paylod :' + payload.partId);
         let payloadsWithAttachments = [];
         payload.parts.forEach((part) => {
-            payloadsWithAttachments.concat(this.searchForAttachmentsInPayload(part));
+            let payloads = this.searchForAttachmentsInPayload(part);
+            console.log('nested attachments in part' + part.partId);
+            console.log(payloads);
+            payloadsWithAttachments.concat(payloads);
         });
         return payloadsWithAttachments;
     }

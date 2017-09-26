@@ -330,7 +330,7 @@ export class GmailService {
     private static checkMessageForAttachments(gmailMessage: iGmailMessage): iPayload[] {
         return this.searchForAttachmentsInPayload(gmailMessage.payload);
     }
-    private static searchForAttachmentsInPayload(payload: iPayload) {
+    private static searchForAttachmentsInPayload(payload: iPayload) :iPayload[] {
             console.log('part Id (of payload) :' +payload.partId)
         if (payload.filename != '') {
             console.log('FOUND ATTACHMENT!');
@@ -339,13 +339,18 @@ export class GmailService {
             return [payload];
         }
         if (!payload.parts) {
+            console.log('Attachments not exist in payload '+payload.partId);
             return [];
         }
         console.log('searching attachments in nested payloads of paylod :' +payload.partId)
         
         let payloadsWithAttachments: iPayload[] = [];
         payload.parts.forEach((part: iPayload) => {
-            payloadsWithAttachments.concat(this.searchForAttachmentsInPayload(part));
+            let payloads =this.searchForAttachmentsInPayload(part);
+            console.log('nested attachments in part'+part.partId);
+            
+            console.log(payloads);
+            payloadsWithAttachments.concat(payloads);
         });
         return payloadsWithAttachments;
     }
