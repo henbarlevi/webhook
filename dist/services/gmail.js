@@ -256,7 +256,7 @@ class GmailService {
         });
     }
     static getMessageAttachments(access_token, user_email, message_id) {
-        return new Promise((resovle, reject) => __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
                 Logger_1.Logger.d(TAG, `******************************************************************`);
                 Logger_1.Logger.d(TAG, ` Checking if Message : ${message_id} Has Attachments`);
@@ -269,6 +269,7 @@ class GmailService {
                 console.log(attachments);
                 console.log(JSON.stringify(attachments));
                 Logger_1.Logger.d(TAG, `==============/  FOUND ATTACHMENTS  ==============`);
+                resolve(attachments);
             }
             catch (e) {
                 reject(e);

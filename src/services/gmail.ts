@@ -227,11 +227,8 @@ export class GmailService {
                     if (changes.history) {//is response contain history details
                         for (let historyFregment of changes.history) {
                             for (let message of historyFregment.messages) {
-
                                 await this.getMessageAttachments(access_token, user_email, message.id);
                             }
-
-
                         }
                     }
                     else { Logger.d(TAG, 'there are no more info for that history List'); }
@@ -299,7 +296,7 @@ export class GmailService {
 
 
     private static getMessageAttachments(access_token: string, user_email: string, message_id: string) {
-        return new Promise(async (resovle, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 Logger.d(TAG, `******************************************************************`);
                 Logger.d(TAG, ` Checking if Message : ${message_id} Has Attachments`);
@@ -313,6 +310,7 @@ export class GmailService {
                 console.log(attachments);
                 console.log(JSON.stringify(attachments));
                 Logger.d(TAG, `==============/  FOUND ATTACHMENTS  ==============`);
+                resolve(attachments);
             }
             catch (e) {
                 reject(e);

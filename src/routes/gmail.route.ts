@@ -57,6 +57,7 @@ router.get('/code', async (req: express.Request, res) => {
 })
 /**getting Gmail user Activities (push notifications) */
 router.post('/webhook', async (req: express.Request, res) => {
+    res.status(200).send('got the message');
     try {
 
         Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
@@ -78,9 +79,9 @@ router.post('/webhook', async (req: express.Request, res) => {
         }
         if (userDoc.google.tokens.access_token) {
             //let changesDetails: iGmailChangesResponse = await GmailService.getChanges(access_token, notificationData.emailAddress, historyId);         
-                let changesDetails: iGmailChangesResponse = await GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
-                //save the historyId in db (for the next notificaiton for this user in the future) :
-                await userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId)            
+            let changesDetails: iGmailChangesResponse = await GmailService.handleNotification(access_token, notificationData.emailAddress, historyId);
+            //save the historyId in db (for the next notificaiton for this user in the future) :
+            await userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId)
         }
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
         Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
@@ -91,9 +92,9 @@ router.post('/webhook', async (req: express.Request, res) => {
     catch (e) {
         Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
     }
-    finally {
-        res.status(200).send('got the message');
-    }
+
+
+
 })
 
 export default router;

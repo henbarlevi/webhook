@@ -59,6 +59,7 @@ router.get('/code', (req, res) => __awaiter(this, void 0, void 0, function* () {
 }));
 /**getting Gmail user Activities (push notifications) */
 router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* () {
+    res.status(200).send('got the message');
     try {
         Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
         Logger_1.Logger.d(TAG, `=================== User  Gmail Acitivity ===================`, 'cyan');
@@ -88,9 +89,6 @@ router.post('/webhook', (req, res) => __awaiter(this, void 0, void 0, function* 
     }
     catch (e) {
         Logger_1.Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
-    }
-    finally {
-        res.status(200).send('got the message');
     }
 }));
 exports.default = router;
