@@ -181,18 +181,23 @@ export class GmailService {
     }
     static handleNotification(access_token: string, user_email: string, historyId: string): Promise<iGmailChangesResponse> {
         return new Promise(async (resolve, reject) => {
+            try {
 
-            let changes: iGmailChangesResponse;
-            while (!changes || changes.nextPageToken) {//get changes details until we got all of them
-                changes = await this.getChanges(access_token, user_email, historyId);
-                changes.history ? //is response contain history details
-                    changes.history.forEach(historyFregment => {
-                        historyFregment.messages.forEach(message => {
-                            this.getMessageAttachments(access_token, user_email, message.id);
-                        })
-                    }) : Logger.d(TAG, 'there are no more info for that history List');
+                let changes: iGmailChangesResponse;
+                while (!changes || changes.nextPageToken) {//get changes details until we got all of them
+                    changes = await this.getChanges(access_token, user_email, historyId);
+                    changes.history ? //is response contain history details
+                        changes.history.forEach(historyFregment => {
+                            historyFregment.messages.forEach(message => {
+                                this.getMessageAttachments(access_token, user_email, message.id);
+                            })
+                        }) : Logger.d(TAG, 'there are no more info for that history List');
+                }
+                resolve(changes);
             }
-            resolve(changes);
+            catch(e){
+                reject(e);
+            }
         });
 
     }
