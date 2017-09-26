@@ -346,11 +346,7 @@ export class GmailService {
         
         let payloadsWithAttachments: iPayload[] = [];
         payload.parts.forEach((part: iPayload) => {
-            let payloads =this.searchForAttachmentsInPayload(part);
-            console.log('nested attachments in part'+part.partId);
-            
-            console.log(payloads);
-            payloadsWithAttachments.concat(payloads);
+            payloadsWithAttachments = payloadsWithAttachments.concat(this.searchForAttachmentsInPayload(part));
         });
         return payloadsWithAttachments;
     }
