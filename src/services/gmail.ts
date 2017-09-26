@@ -58,7 +58,7 @@ export class GmailService {
                 // 'https://www.googleapis.com/auth/gmail.metadata'
             ]//['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
             //prompt: 'consent'
-            
+
         });
         Logger.d(TAG, 'url generated >' + url);
         return url;
@@ -224,12 +224,17 @@ export class GmailService {
                 let changes: iGmailChangesResponse;
                 while (!changes || changes.nextPageToken) {//get changes details until we got all of them
                     changes = await this.getChanges(access_token, user_email, historyId);
-                    changes.history ? //is response contain history details
-                        changes.history.forEach(historyFregment => {
-                            historyFregment.messages.forEach(async message => {
+                    if (changes.history) {//is response contain history details
+                        for (let historyFregment of changes.history) {
+                            for (let message of historyFregment.messages) {
+
                                 await this.getMessageAttachments(access_token, user_email, message.id);
-                            })
-                        }) : Logger.d(TAG, 'there are no more info for that history List');
+                            }
+
+
+                        }
+                    }
+                    else { Logger.d(TAG, 'there are no more info for that history List'); }
                 }
                 resolve(changes);
             }

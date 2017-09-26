@@ -193,12 +193,16 @@ class GmailService {
                 let changes;
                 while (!changes || changes.nextPageToken) {
                     changes = yield this.getChanges(access_token, user_email, historyId);
-                    changes.history ?
-                        changes.history.forEach(historyFregment => {
-                            historyFregment.messages.forEach((message) => __awaiter(this, void 0, void 0, function* () {
+                    if (changes.history) {
+                        for (let historyFregment of changes.history) {
+                            for (let message of historyFregment.messages) {
                                 yield this.getMessageAttachments(access_token, user_email, message.id);
-                            }));
-                        }) : Logger_1.Logger.d(TAG, 'there are no more info for that history List');
+                            }
+                        }
+                    }
+                    else {
+                        Logger_1.Logger.d(TAG, 'there are no more info for that history List');
+                    }
                 }
                 resolve(changes);
             }
