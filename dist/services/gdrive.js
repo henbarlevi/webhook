@@ -32,7 +32,11 @@ class GdriveService {
         const url = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             response_type: 'code',
-            scope: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
+            scope: [
+                'https://mail.google.com/',
+                'https://www.googleapis.com/auth/drive',
+                'https://www.googleapis.com/auth/userinfo.email'
+            ],
         });
         Logger_1.Logger.d(TAG, 'url generated >' + url);
         return url;

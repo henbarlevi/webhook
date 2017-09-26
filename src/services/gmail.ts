@@ -47,12 +47,18 @@ export class GmailService {
         const url: string = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             response_type: 'code',
-            scope: ['https://mail.google.com/', 'https://www.googleapis.com/auth/userinfo.email',
-                'https://www.googleapis.com/auth/gmail.modify',
-                'https://www.googleapis.com/auth/pubsub',
-                'https://www.googleapis.com/auth/gmail.readonly',
-                'https://www.googleapis.com/auth/gmail.metadata']//['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
+            scope: [
+                'https://mail.google.com/',
+                'https://www.googleapis.com/auth/drive',
+                'https://www.googleapis.com/auth/userinfo.email',
+
+                // 'https://www.googleapis.com/auth/gmail.modify',
+                // 'https://www.googleapis.com/auth/pubsub',
+                // 'https://www.googleapis.com/auth/gmail.readonly',
+                // 'https://www.googleapis.com/auth/gmail.metadata'
+            ]//['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
             //prompt: 'consent'
+            
         });
         Logger.d(TAG, 'url generated >' + url);
         return url;
@@ -290,9 +296,10 @@ export class GmailService {
     private static getMessageAttachments(access_token: string, user_email: string, message_id: string) {
         return new Promise(async (resovle, reject) => {
             try {
-                Logger.d(TAG, `****** Checking if Message : ${message_id} Has Attachments   ******`);
+                Logger.d(TAG, `******************************************************************`);
+                Logger.d(TAG, ` Checking if Message : ${message_id} Has Attachments`);
                 Logger.d(TAG, `user email = ${user_email}`);
-                Logger.d(TAG, `ccess_token = ${access_token}`);
+                Logger.d(TAG, `access_token = ${access_token}`);
                 Logger.d(TAG, `******************************************************************`);
 
                 let gmailMessage: iGmailMessage = await this.getMessage(access_token, user_email, message_id);

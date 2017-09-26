@@ -38,11 +38,11 @@ class GmailService {
         const url = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             response_type: 'code',
-            scope: ['https://mail.google.com/', 'https://www.googleapis.com/auth/userinfo.email',
-                'https://www.googleapis.com/auth/gmail.modify',
-                'https://www.googleapis.com/auth/pubsub',
-                'https://www.googleapis.com/auth/gmail.readonly',
-                'https://www.googleapis.com/auth/gmail.metadata'] //['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
+            scope: [
+                'https://mail.google.com/',
+                'https://www.googleapis.com/auth/drive',
+                'https://www.googleapis.com/auth/userinfo.email',
+            ] //['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
             //prompt: 'consent'
         });
         Logger_1.Logger.d(TAG, 'url generated >' + url);
@@ -254,9 +254,10 @@ class GmailService {
     static getMessageAttachments(access_token, user_email, message_id) {
         return new Promise((resovle, reject) => __awaiter(this, void 0, void 0, function* () {
             try {
-                Logger_1.Logger.d(TAG, `****** Checking if Message : ${message_id} Has Attachments   ******`);
+                Logger_1.Logger.d(TAG, `******************************************************************`);
+                Logger_1.Logger.d(TAG, ` Checking if Message : ${message_id} Has Attachments`);
                 Logger_1.Logger.d(TAG, `user email = ${user_email}`);
-                Logger_1.Logger.d(TAG, `ccess_token = ${access_token}`);
+                Logger_1.Logger.d(TAG, `access_token = ${access_token}`);
                 Logger_1.Logger.d(TAG, `******************************************************************`);
                 let gmailMessage = yield this.getMessage(access_token, user_email, message_id);
                 let attachments = this.checkMessageForAttachments(gmailMessage);

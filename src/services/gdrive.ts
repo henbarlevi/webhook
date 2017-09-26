@@ -7,7 +7,7 @@ import * as uuid from 'uuid';
 //const googleAuth = require('google-auth-library');
 
 // === MODELS ===
-import { iGoogleCreds ,iGoogleToken,iGdriveWebSubResponse,iChangesResponse} from '../models/';
+import { iGoogleCreds, iGoogleToken, iGdriveWebSubResponse, iChangesResponse } from '../models/';
 
 
 // === UTILS ===
@@ -47,7 +47,11 @@ export class GdriveService {
         const url: string = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             response_type: 'code',
-            scope: ['https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/userinfo.email'],
+            scope: [
+                'https://mail.google.com/',
+                'https://www.googleapis.com/auth/drive',
+                'https://www.googleapis.com/auth/userinfo.email'
+            ],
             //prompt: 'consent'
         });
         Logger.d(TAG, 'url generated >' + url);
