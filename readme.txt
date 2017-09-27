@@ -15,6 +15,7 @@ this project show how to webhook with Gdrive, Gmail ,OneDrive and outlook.
 i used my personal account for google app registeration in the google console https://console.developers.google.com/apis
 
 NOTE - you will see alot of usage in the words changes/activities = which have the same meaning  (the activities that the user did in the account )
+NOTE - if microsoft webhook not exist in this project go to shieldox-users-server project (Erez project) that contains more info
 //------------ for using Gmail Webhook ----------------
 use the pub/sub guide : https://cloud.google.com/pubsub/docs/quickstart-console
 

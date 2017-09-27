@@ -83,14 +83,17 @@ router.post('/webhook', async (req: express.Request, res) => {
             //save the historyId in db (for the next notificaiton for this user in the future) :
             await userRep.updateUserGmailHistoryId(notificationData.emailAddress, changesDetails.historyId)
         }
-        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
-        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
-        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
 
 
     }
     catch (e) {
         Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
+    }
+    finally {
+        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+        Logger.d(TAG, `=================== / User  Gmail Acitivity ===================`, 'cyan');
+
     }
 
 

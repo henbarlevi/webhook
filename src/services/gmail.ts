@@ -106,7 +106,8 @@ export class GmailService {
     * you didnt provided the scope premissions when authorazing with Oauth2.0: 'https://www.googleapis.com/auth/pubsub' , .... (look in :https://developers.google.com/gmail/api/v1/reference/users/watch)
     *you didnt grant publish priviliges to serviceAccount:gmail-api-push@system.gserviceaccount.com in the  IAM:
         https://developers.google.com/gmail/api/guides/push#grant_publish_rights_on_your_topic , https://console.cloud.google.com/iam-admin/iam  
-  */
+    *the topicName you are trying to register to is deleted/mismatch
+        */
     static registerWebhook(access_token: string, user_email: string): Promise<iGmailWebSubResponse> {
         return new Promise((resolve, reject) => {
 
