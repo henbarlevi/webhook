@@ -5,22 +5,23 @@ import * as bodyParser from 'body-parser';
 import * as mongoose from 'mongoose';
 import * as config from 'config';
 
-import GdriveRoutes from './routes/gdrive.route';
-import GmailRoutes from './routes/gmail.route';
+import outlookRoutes from './outlook/routes/outlook.route';
+import gmailRoutes from './gmail/routes/gmail.route';
+import GoogleDomainVerification from './gmail/routes/domainVerification.route';
 
-import { Logger } from './utils/logger'
-const TAG = 'App';
+//===== utils
+import { Logger } from './utils/Logger';
+const TAG:string = 'App.ts';
+
 const ENV: string = process.env.NODE_ENV || 'local';
-const envConfig: any = config.get(`${ENV}`);
+const envConfig : any= config.get(`${ENV}`);
 const connectionString: string = envConfig.connectionString || 'mongodb://localhost/mydb';
-const BASE_URL: string = <string>envConfig.base_url;
-Logger.d(TAG, '=================== App Config =================== ','yellow');
-console.log('ENV >' + ENV);
-Logger.d(TAG, 'Server BASE URL > ' + BASE_URL, 'yellow');
+Logger.d(TAG,`============== ENV Configuration ==============`,'yellow');
+console.log(`ENV = `+ENV)
 console.log(envConfig);
-Logger.d(TAG, '=================== / App Config =================== ','yellow');
+Logger.d(TAG,`============== / ENV Configuration ============`,'yellow');
 
-//const connectionString: string = process.env.DB_CONNECTION_STRING || 'mongodb://localhost/mydb';
+
 
 // Creates and configures an ExpressJS web server.
 class App {
@@ -38,22 +39,25 @@ class App {
 
   // Configure Express middleware.
   private middleware(): void {
-    mongoose.connect(connectionString);
+    //mongoose.connect(connectionString);
 
-    this.express.use(logger('dev'));
+    //this.express.use(logger('dev'));
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
-    this.express.use(express.static(path.join(__dirname, './dist/public')));//handle request for static files - client will get all files from the 'public' folder
+
   }
 
   // Configure API endpoints.
   private routes(): void {
+    //echo
+    this.express.get('/',(req:express.Request,res:express.Response)=>{ res.send(`welcome to mail webhook server api (ENV = ${ENV})`);})
     /* This is just to get up and running, and to make sure what we've got is
      * working so far. This function will change when we start to add more
      * API endpoints */
-    this.express.use('/', GdriveRoutes);
-    this.express.use('/gmail', GmailRoutes);
-    
+    this.express.use('/outlook', outlookRoutes);
+    this.express.use('/gmail', gmailRoutes);
+    //extra step for using webhooks Pub/Sub with google:
+    this.express.use('/',GoogleDomainVerification);
   }
 
 

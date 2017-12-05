@@ -1,22 +1,45 @@
 {
-    "prod": {
-        "connectionString": "mongodb://multi-webhooks-test:weBhbo3T48MYO7wFPmdKIhi0vhQWTqbeN5y2gM7pgWNsMNB5KISp2ubVnbn5oXidr7Hz3BJRd6mJ5J2oGsaE8g==@multi-webhooks-test.documents.azure.com:10255/?ssl=true",
-        "base_url": "https://multi-webhooks-test.azurewebsites.net",
-        "gdrive": {
-            "client_id": "554559944330-efliq3qbq8r5pieavok9ocal6u322cu2.apps.googleusercontent.com",
-            "client_secret": "2At7TehLKNeMxtWME1WIEH64",
-            "redirect_url":"https://multi-webhooks-test.azurewebsites.net/gdrive/code",
-            "redirect_url_gmail":"https://multi-webhooks-test.azurewebsites.net/gmail/code"
-        }
-    },
+
+    /*
+    ============================
+                LOCAL
+    ============================                
+    */
+
     "local": {
-        "connectionString": "mongodb://localhost/myLocaldb",
-        "base_url": "http://localhost:3000",
-        "gdrive": {
-            "client_id": "554559944330-efliq3qbq8r5pieavok9ocal6u322cu2.apps.googleusercontent.com",
-            "client_secret": "2At7TehLKNeMxtWME1WIEH64",
-            "redirect_url":"http://localhost:3000/gdrive/code",
-            "redirect_url_gmail":"http://localhost:3000/gmail/code"
+        "base_url":"https://e5117882.ngrok.io/",//using ngrok to expose localhost to the internet
+        /* ======= Outloook ====== */
+        //app for Oauth & Webhook testing
+        "outlook": {
+            "app_name": "outlook-webhook-localhost",
+            "client_id": "7fc9c931-d918-495a-aec2-4a2b8c92c1f8",
+            "client_secret": "zdwpNCKIA97~{#rudWE197%",
+            "redirect_uri": "http://localhost:3000/outlook/code",
+            "response_type": "code",
+            "grant_type": "authorization_code",
+            //see scope permissions in :https://developer.microsoft.com/en-us/graph/docs/concepts/permissions_reference
+            "scope": [
+                "Mail.Read"
+            ],
+            "webhook": {
+                "notification_url": "https://e5117882.ngrok.io/outlook/notification" //where to send the webhooks events
+            }
+        },
+        /* ======= Gmail ====== */
+        //app for Oauth & Webhook testing  (created 1 app for all env's)                    
+        "gmail": {
+            "app_name": "gmail-webhook-tst",
+            "client_id": "852138033718-j4n87dnqu3mt151hbumcblrsinp62cv2.apps.googleusercontent.com",
+            "client_secret": "wCLwLZwpW_f9oVpKlZV-PwIv",
+            "redirect_uri": "http://localhost:3000/gmail/code",
+            //gmail scopes: https://developers.google.com/gmail/api/auth/scopes
+            "scope": [
+                "https://www.googleapis.com/auth/gmail.readonly"
+            ],
+            "webhook": {
+                "topicName":"projects/gmail-webhook-tst/topics/gmail_mail",
+                "subscriptionName":"projects/gmail-webhook-tst/subscriptions/local_mailwebhook" //this server subscription to the topic above , will push the notificcations into :https://e5117882.ngrok.io/gmail/notification
+            }
         }
     }
 }
