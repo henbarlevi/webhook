@@ -66,8 +66,9 @@ router.get('/code', async (req: express.Request, res: express.Response) => {
  * General workflow
  * 1. validationToken - if exist in the req.query it means that microsoft just checking that this endpoint is legit - we should return back the validationToken
  * 2. receiving in the body a chunk of notifications
- * 3.checking that the notification is a message & it contain attachments - if so getting the attachments binary data.
- * 4.sending the attachments binary data to shieldox to be checked 
+ * 3. pull from db - user access_token by subscriptionId
+ * 3. using Outlook API to get more info about the notification - for example get email message by id
+ * 
  */
 router.post('/notification', async (req: express.Request, res: express.Response) => {
     try {
@@ -110,7 +111,6 @@ router.post('/notification', async (req: express.Request, res: express.Response)
                         Logger.st(TAG, `Attachments of Message ${message_id.slice(0, 10)}...`, 'bgGreen');
                         Logger.d(TAG,attachmentsResponse.value,'bgGreen')
                         
-                        //4.sending the attachments binary data to shieldox to be checked
                         
                     }
                 }

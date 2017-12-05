@@ -74,16 +74,16 @@ router.get('/code', async (req: express.Request, res: express.Response) => {
 router.post('/notification', async (req: express.Request, res) => {
     res.status(200).send('got notification');
     try {
-        //TODO - need to pull access_token from shieldox
-        Logger.t(TAG, `Gmail User [access_token=${DbMockToken?DbMockToken.slice(0, 5):''}..] Activity`, 'green');
-        console.log('headers');
-        console.log(req.headers);
+        Logger.t(TAG, `Gmail User Activity`, 'green');
         let notification: iGmailNotification = req.body;
         Logger.st(TAG, 'Stringify Notification :')
         Logger.d(TAG, JSON.stringify(req.body));
         // decrypt from base64:
         let notificationData: iGmailNotificationData = JSON.parse(Buffer.from(notification.message.data, 'base64').toString('ascii'));
         Logger.d(TAG, `Notification HistoryId = ${notificationData.historyId}`, 'yellow');
+        Logger.d(TAG, `Notification User Email = ${notificationData.emailAddress}`, 'yellow');
+        
+        //TODO - get user access_token from db by user email
         //get details about the pushed notification:
         //TODO -suppose to pull user's access token ,historyId from db
         let historyId: string = DbMockHistoryId;
@@ -97,13 +97,12 @@ router.post('/notification', async (req: express.Request, res) => {
         DbMockHistoryId =await GmailService.handleNotification(access_token, historyId);
         Logger.d(TAG, 'Finished Handling Notification')
 
-        
         // //just for TEST - deleting sub
         // await GmailService.deleteWebhookWatch(access_token);
         // Logger.d(TAG,`Deleteing Webhook Sub(=watch) for user ${access_token.slice(0,4)}..`);
     }
     catch (e) {
-        Logger.d(TAG, 'Err >>>>>>>>>>>>' + e, 'red');
+        Logger.d(TAG, 'Err ========>' + e, 'red');
     }
     finally {
         Logger.t(TAG, `END / Gmail User Activity`, 'green');
