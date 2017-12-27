@@ -8,7 +8,7 @@ import { GmailService } from '../services/gmail.service';
 import { Logger } from '../../utils/Logger';
 import { iGoogleToken } from '../models/iGoogleToken.model';
 import { iGmailNotification, iGmailNotificationData } from '../models/iGmailNotification.model';
-import { iSubscriptionResponse } from '../models/iSubscriptionResponse.model';
+import { iWatchResponse } from '../models/iSubscriptionResponse.model';
 import { iGmailHistory } from '../models/iGmailHistory.model';
 import { iGmailMessage } from '../models/iGmailMessage.model';
 const TAG: string = 'Gmail Routes |';
@@ -44,7 +44,7 @@ router.get('/code', async (req: express.Request, res: express.Response) => {
         Logger.st(TAG, `2. Got Access Token Sucessfuluy`, 'green');
         printTokenDetials(token);//console.log
         //subscribe to user Gmail Events
-        let subscription: iSubscriptionResponse = await GmailService.createWebhookWatch(token.access_token);
+        let subscription: iWatchResponse = await GmailService.createWebhookWatch(token.access_token);
         DbMockHistoryId = subscription.historyId;
         Logger.st(TAG, `3. registred to webhook for user ${token.access_token}(=access_token)`, 'green');
 

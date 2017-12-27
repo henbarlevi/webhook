@@ -6,7 +6,7 @@ import * as request from 'request';
 // =============
 
 import { iGoogleToken } from '../models/iGoogleToken.model';
-import { iSubscriptionResponse } from '../models/iSubscriptionResponse.model';
+import {  iWatchResponse } from '../models/iSubscriptionResponse.model';
 import { iSubscriptionRequest } from '../models/iSubscriptionRequest.model';
 import { iGmailHistory } from '../models/iGmailHistory.model';
 import { iGmailMessage, iGmailMessagePayload } from '../models/iGmailMessage.model';
@@ -85,22 +85,23 @@ export class GmailService {
        https://developers.google.com/gmail/api/guides/push#grant_publish_rights_on_your_topic , https://console.cloud.google.com/iam-admin/iam  
    *the topicName you are trying to register to is deleted/mismatch
        */
-    static createWebhookWatch(access_token: string): Promise<iSubscriptionResponse> {
+      static createWebhookWatch(access_token: string,userId:string='me'): Promise<iWatchResponse> {
         return new Promise((resolve, reject) => {
-            Logger.d(TAG, `*** creating subscription for user access token ${access_token.slice(0, 15)}.. ***`, 'gray');
+            let url = `https://www.googleapis.com/gmail/v1/users/${userId}/watch`;
+            Logger.d(TAG, `*** creating subscription for user access token ${access_token.slice(0, 15)}.. , url >${url} ***`, 'gray');
             const body: iSubscriptionRequest = {
                 topicName: topicName, //to witch topic to publish the notifications https://console.cloud.google.com/cloudpubsub
                 //send notification only about sent emails - Currently not working (Bug in GMAIL API):
                 labelIds: ["SENT"],
                 labelFilterAction: 'include'
             }
-            request.post(`https://www.googleapis.com/gmail/v1/users/me/watch`, {
+            request.post(url, {
                 json: true,
                 headers: {
                     Authorization: 'Bearer ' + access_token
                 },
                 body: body
-            }, (err, res, subscription: iSubscriptionResponse) => {
+            }, (err, res, subscription: iWatchResponse) => {
                 this.handleResponse(err, res, subscription, resolve, reject);
             });
         })
