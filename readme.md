@@ -146,6 +146,52 @@ interface iGmailNotification {
 > # Gdrive Webhook 👂
 > - ### the code in the gdrive section is not accurate but it can give a general understanding of the whole flow 
 > - ### can find full info [here](https://developers.google.com/drive/v3/web/push).
+> # Gsuite Platform 👂
+> first of all just to clarify G suite platform gives the ability to perform a [Domain-Wide Delegation of Authority](https://developers.google.com/admin-sdk/directory/v1/guides/delegation)
+which basically means that the admin can let our app access_token to all the g suite users
+which means we can avoid from requesting each individual user to accept our app in order to do actions on behalf of that user
+(for example webhook to user Gmail + Gdrive activities.)
+<br>in order to to implement [Domain-Wide Delegation of Authority](https://developers.google.com/admin-sdk/directory/v1/guides/delegation) do as the following:
+-  [Enable the  Admin SDK](https://console.developers.google.com/apis/api/admin.googleapis.com/overview)
+-  [create a service account](https://console.developers.google.com/projectselector/iam-admin/serviceaccounts) 
+> - Furnish a new private key
+> - Enable G Suite Domain-wide Delegation
+> - save the json file the downloaded (its the only copy of the service account credetials!!)
+- administrator of the G Suite account will need to authorize the service account you've created by following [this steps](https://developers.google.com/admin-sdk/directory/v1/guides/delegation#delegate_domain-wide_authority_to_your_service_account) <br>
+> - NOTE - he will need to specify the scopes permissions that he allow for the service account. <br>
+for example i used those scopes:<br>
+"https://www.googleapis.com/auth/admin.directory.user" - to get all users data in the Gsuite account,
+"https://www.googleapis.com/auth/admin.directory.domain.readonly" - to read all domains,<br>
+"https://www.googleapis.com/auth/gmail.readonly" - to read user emails <br>
+> - if we want to get some administrative operations (for example get all Users data of the G Suite account ) we'll probably need to use the [Directory API](https://developers.google.com/admin-sdk/directory/) and we'll need to specify the [scopes we need](https://developers.google.com/admin-sdk/directory/v1/guides/authorizing)
+(and also the administrator)
+- now we can use the service account but in order to make an authorized API calls the service account will need to receive tokens.
+we can the [manual way](https://developers.google.com/identity/protocols/OAuth2ServiceAccount#authorizingrequests) (with http calls). OR we can use one of the sdk libraries (for example - [this nodejs lib](https://github.com/google/google-api-nodejs-client/#using-jwt-service-tokens))
+- if you need to send api calls on behalf of admin user for example - you will need to impersonate that user by specifing the user email when recieving the tokens :
+```ts
+var google = require('googleapis');
+
+var key = require('/path/to/key.json');
+var jwtClient = new google.auth.JWT(
+  key.client_email, //service account email
+  null,
+  key.private_key,//service account private key
+  ["https://www.googleapis.com/auth/admin.directory.user",
+   "https://www.googleapis.com/auth/admin.directory.domain.readonly",
+   "https://www.googleapis.com/auth/gmail.readonly"], // an array of auth scopes
+  someAdminEmail// User to impersonate (leave empty if no impersonation needed)  
+);
+
+jwtClient.authorize(function (err, tokens) {
+  if (err) {
+    console.log(err);
+    return;
+    //now you can use this access token to do authorzied api calls
+  }
+
+});
+```
+in my project example i've impersonate a super admin user in order to retrieve all users of the organization, then i've impersonated each user in order to create gmail webhook for each one
 ## ================================
 # NOTES
 ## ================================

@@ -40,6 +40,37 @@
                 "topicName":"projects/gmail-webhook-tst/topics/gmail_mail",
                 "subscriptionName":"projects/gmail-webhook-tst/subscriptions/local_mailwebhook" //this server subscription to the topic above , will push the notificcations into :https://e5117882.ngrok.io/gmail/notification
             }
+        },
+               /* ======= Gsuite TEST ====== */
+        //app for Oauth & Webhook testing  (created 1 app for all env's)  
+        "gsuite": {
+            //(using the same google app:)
+            "app_name": "gmail-webhook-tst",
+            "client_id": "852138033718-j4n87dnqu3mt151hbumcblrsinp62cv2.apps.googleusercontent.com",
+            "client_secret": "wCLwLZwpW_f9oVpKlZV-PwIv",
+            "redirect_uri": "http://localhost:3000/gmail/code",
+            //gmail scopes: https://developers.google.com/gmail/api/auth/scopes
+            "scope": [
+                "https://www.googleapis.com/auth/admin.directory.user",
+                "https://www.googleapis.com/auth/admin.directory.domain.readonly",
+                "https://www.googleapis.com/auth/gmail.readonly"
+            ],
+            "webhook": {
+                "topicName": "projects/gmail-webhook-tst/topics/gmail_mail",
+                "subscriptionName": "projects/gmail-webhook-tst/subscriptions/local_mailwebhook" //this server subscription to the topic above , will push the notificcations into :https://e5117882.ngrok.io/gmail/notification
+            },
+            "service_account": {
+                "type": "service_account",
+                "project_id": "gmail-webhook-tst",
+                "private_key_id": "e23db81b8d8658a4267f80a588b2920e34864883",
+                "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDLiE8jOlmbBNY3\nDnLeuuyHpGpp1sYa2hNgekF+Nqx0vWozesm+pn9sdg+BHJ6FQzr0XZUp20lxp9Fv\nBd7ePTxZalElXl8ZkNJtmmjvKu5nK/DgBQ36X4ivUSAazMoLqTjFJbNrJto4Lvh/\nVYkhTHKi4+ANYZA5HMcPwImpBbsUF7M6UB0+28OAFhzHO/ZZMo7zHaba3SAfYiJV\nb+xSK32ZgmdmoGCoFFpbhZIacPU7kq0sLgYkLZMZg7Kl50EvkTojPjCgrz/0HZsq\naMHhgpbHJr/bvPQ8Q9s3a/ZVVaa1SdjrAYaqm7RnuTV1KXbS0KB8Tkm0VGc/H7wJ\nxL4EZbZHAgMBAAECggEAJdRXCTAuOW7jteX8mcNadTetA7EErzb7RQJUK/ZThXsz\nQxA+cS4XHvyukwvTtucxDPxb3iTA+Nv9REpuCxaMof3tySlKOcE+K1r4yANNvmVf\nZvPpjjC1gghtFC4eG56/S31fZLoa8zhfvaMTUtoXsIj0Ouh4WvUrVpUtwPmstOYB\no91pKzVqL1onbc5b+j2T/hd6TGtFo7pxor2raJNGkKt0nrf4CEwkeLg8CW61hPmm\nJsB6FbXK8nAT7dR1svxaHgL5cYw+bGfOHTRCeLN2ekkJ6xK0PYzoluA/UsROrD3G\nbpUMajzh9+nyIHDPvRCmp9RJWRuBhpamwNhqWZuvCQKBgQD4iEFKStmm+V9lJwD4\nAexYzsswIgQjV23BzrqupEPTMd2DM/T1DBKJsb5/ERSOly8R4sGjy2fY634Yzgi0\nle5XjTvGr12f7MVlvMcq4XRuaDTxVVuIwcn/yu2xCfcxm9g3yw8xS91xZtCOXazN\n3DMUIpIZ7qe40EkMYIhGm2jxRQKBgQDRpejOBbZ3Ie7raTbQ2VUrk93w5GcJHh6s\n3+p44I+ar4/Djk86Ft1rbi51dovQl5YrUwkgn++u3j5LmfJwyUIaSuqHm1OZ65kj\nZWKMMtppZpVqJgdQ81Eaf5RayzgX5sOZl+s1gNiyKcmRlXsvYuzpa/p/DvuK2a6U\nbzpBcI10GwKBgQDANMApsJF7LMi19eAt7W7Xj7ZcVzJUEr1zcWm2vpslrh7d5UTA\nbsG3c5sbsh3v2MQyVOfkwN5jSFyQ2mapInrdgwCDvAPwNrDC6aguZYYiDL1FFvpf\nXV/XTx1cGZTu7NPe8k+hlEaB+T25nICUBIQMQmAzZfqYV5zm0ZES6gXS8QKBgQC6\nlkbU1hDHhtP1gPbgeg1rc3ccZqutWblDcyZj3rjwm0AAdC/fK2p1quJ+eLuHMuLc\nPFLrTm0r3XDkKGe2KelDLVn+xydo3l61Og6zaK8rD7n7d00bpvKP+uw2wpdx7lg3\n4xXb0IkMSFS11ayFSC5CsW+IlfUaZxMR2MyoYVwD8QKBgQCIdFsI+c8XoOfAILup\nHFfzvK8E8pV8dLq8VxOR6ul8XEq4udfHln86HgY8LiDjj00ygX+qLA+Ek0/fE6vH\nlHS4KymS2/Z4u+SxAIhUyHpvIRP7QbmKMLWQLNJwj5rBWKYwS1jE37N+N1ZW0rz3\nV5gMW6b9X+irXzYLvNEwfJ8zBg==\n-----END PRIVATE KEY-----\n",
+                "client_email": "domain-wide-delegation@gmail-webhook-tst.iam.gserviceaccount.com",
+                "client_id": "101715289942284439682",
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://accounts.google.com/o/oauth2/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/domain-wide-delegation%40gmail-webhook-tst.iam.gserviceaccount.com"
+            }
         }
     }
 }
